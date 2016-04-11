@@ -20,10 +20,10 @@ point observerPoint, controlPoint;
 pair <point,point> dim;
 pair <size_t,size_t> pixelSize;
 vector <obj*> objs;
-vector < vector<int[3]> > picture;
+vector < vector<vector <int> > > picture;
 
 vector <int> getColor(int i, int j) {
-    vector <int> color(3);
+    vector <int> color(3,0);
     point pixel = controlPoint + ((dim.first * (ld)i) + (dim.second * (ld)j));
     point ray = pixel - observerPoint;
     if(ray == point(0,0,0)) {
@@ -34,7 +34,13 @@ vector <int> getColor(int i, int j) {
     int firstInterNumb = -1;
     
     for(int i = 0;i < objs.size(); ++i) {
-        point p = objs[i]->checkIntersect(ray, observerPoint);
+        std::pair<status,point> res = objs[i]->checkIntersect(ray, observerPoint);
+        
+        if(res.first == NOT_INTERSECT) {
+            continue;
+        }
+        
+        point p = res.second;
         
         point beam = p - observerPoint;
         
@@ -51,6 +57,20 @@ vector <int> getColor(int i, int j) {
     }
     
     return color;
+}
+
+void makeDataToFormatPPM() {
+    cout << "P3\n";
+    cout << pixelSize.first << " " <<  pixelSize.second << "\n";
+    cout << 255 << "\n";
+    for(int i = 0;i < pixelSize.first;++i) {
+        for(int j = 0; j < pixelSize.second;++j) {
+            for(int k = 0;k < 3; ++k) {
+                cout << picture[i][j][k] << " ";
+            }
+            cout << "\n";
+        }
+    }
 }
 
 int main(int argc, const char * argv[]) {
@@ -71,12 +91,13 @@ int main(int argc, const char * argv[]) {
                 cin >> v[i].x >> v[i].y >> v[i].z;
             }
             objs.push_back(new triangle(color,v));
-        } else {
-            point c;
-            ld r;
-            cin >> c.x >> c.y >> c.z >> r;
-            objs.push_back(new sphere(color,c,r));
         }
+//        } else {
+//            point c;
+//            ld r;
+//            cin >> c.x >> c.y >> c.z >> r;
+//            objs.push_back(new sphere(color,c,r));
+//        }
     }
     
     cin >> controlPoint.x >> controlPoint.y >> controlPoint.z;
@@ -84,16 +105,15 @@ int main(int argc, const char * argv[]) {
     cin >> dim.second.x >> dim.second.y >> dim.second.z >> pixelSize.second;
     cin >> observerPoint.x >> observerPoint.y >> observerPoint.z;
     
-    picture.resize(pixelSize.first, vector <int[3]> (pixelSize.second));
+    picture.resize(pixelSize.first, vector <vector <int> > (pixelSize.second, vector <int>(3)));
     
     for(int i =0;i < pixelSize.first;++i) {
         for(int j = 0;j < pixelSize.second;++j) {
-            auto c = getColor(i,j);
-            for(int k = 0;k < 3;++k) {
-                picture[i][j][k] = c.data()[k];
-            }
+            picture[i][j] = getColor(i,j);
         }
     }
+    
+    makeDataToFormatPPM();
     
     return 0;
 }
