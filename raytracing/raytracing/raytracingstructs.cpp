@@ -115,7 +115,7 @@ std::pair <status,point> triangle::checkIntersect(point ray, point start) {
     ld line3[3] = {1,1,-1};
     
     if(sgn(coord,line1) > 0 && sgn(coord, line2) > 0 && sgn(coord, line3) < 0) {
-        return std::make_pair(FRONT_SIZE_INTERSECT, intersect);
+        return std::make_pair(FRONT_SIDE_INTERSECT, intersect);
     } else {
         //case if intersection outside of triangle
 //        if(ray.x == ray.y && ray.x == 0) {

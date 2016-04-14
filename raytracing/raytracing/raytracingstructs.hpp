@@ -20,8 +20,8 @@ typedef long double ld;
 
 enum status {
     NOT_INTERSECT,
-    FRONT_SIZE_INTERSECT,
-    BACK_SIZE_INTERSECT
+    FRONT_SIDE_INTERSECT,
+    BACK_SIDE_INTERSECT
 };
 
 struct point {
