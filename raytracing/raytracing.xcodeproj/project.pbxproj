@@ -29,6 +29,7 @@
 		B95D24341CBAEC4400BA20FE /* raytracingstructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raytracingstructs.cpp; sourceTree = "<group>"; };
 		B95D24351CBAEC4400BA20FE /* raytracingstructs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raytracingstructs.hpp; sourceTree = "<group>"; };
 		B95D24371CBAF7F900BA20FE /* input.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = input.txt; sourceTree = "<group>"; };
+		B9A9A55F1CC006C3001E1EB8 /* output.ppm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.ppm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 		B95D242C1CBAE7D000BA20FE /* raytracing */ = {
 			isa = PBXGroup;
 			children = (
+				B9A9A55F1CC006C3001E1EB8 /* output.ppm */,
 				B95D242D1CBAE7D000BA20FE /* main.cpp */,
 				B95D24341CBAEC4400BA20FE /* raytracingstructs.cpp */,
 				B95D24351CBAEC4400BA20FE /* raytracingstructs.hpp */,
@@ -247,6 +249,7 @@
 				B95D24331CBAE7D000BA20FE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

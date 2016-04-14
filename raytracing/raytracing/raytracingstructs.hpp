@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 typedef long double ld;
 
@@ -53,7 +54,13 @@ struct point {
         point d = *this - p;
         return d.dist2() < (EPS * EPS);
     }
+    void printPoint() {
+        std::cout << "***********" << std::endl;
+        std::cout << x << " " << y << " " << z << std::endl;
+        std::cout << "***********" << std::endl;
+    }
 };
+
 
 //point pInf(1e100,1e100,1e100);
 

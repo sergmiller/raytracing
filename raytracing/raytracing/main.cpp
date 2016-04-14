@@ -20,11 +20,12 @@ point observerPoint, controlPoint;
 pair <point,point> dim;
 pair <size_t,size_t> pixelSize;
 vector <obj*> objs;
-vector < vector<vector <int> > > picture;
+vector <vector<vector <int> > > picture;
 
-vector <int> getColor(int i, int j) {
+vector <int> getColor(int x, int y) {
     vector <int> color(3,0);
-    point pixel = controlPoint + ((dim.first * (ld)i) + (dim.second * (ld)j));
+    point pixel = controlPoint + ((dim.first * (ld)x) + (dim.second * (ld)y));
+
     point ray = pixel - observerPoint;
     if(ray == point(0,0,0)) {
         return color;
@@ -35,7 +36,7 @@ vector <int> getColor(int i, int j) {
     
     for(int i = 0;i < objs.size(); ++i) {
         std::pair<status,point> res = objs[i]->checkIntersect(ray, observerPoint);
-        
+
         if(res.first == NOT_INTERSECT) {
             continue;
         }
@@ -59,9 +60,9 @@ vector <int> getColor(int i, int j) {
     return color;
 }
 
-void makeDataToFormatPPM() {
+void convertDataToFormatPPM() {
     cout << "P3\n";
-    cout << pixelSize.first << " " <<  pixelSize.second << "\n";
+    cout << pixelSize.second << " " <<  pixelSize.first << "\n";
     cout << 255 << "\n";
     for(int i = 0;i < pixelSize.first;++i) {
         for(int j = 0; j < pixelSize.second;++j) {
@@ -113,7 +114,7 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-    makeDataToFormatPPM();
+    convertDataToFormatPPM();
     
     return 0;
 }
