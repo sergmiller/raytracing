@@ -24,34 +24,34 @@ enum status {
     BACK_SIDE_INTERSECT
 };
 
-struct point {
+struct Point {
     ld x,y,z;
-    point(){
+    Point(){
         x = y = z = 0;
     }
-    point(ld _x, ld _y, ld _z) {
+    Point(ld _x, ld _y, ld _z) {
         x = _x;
         y = _y;
         z = _z;
     }
-    const point operator +(const point& p) const{
-        return point(x + p.x, y + p.y, z + p.z);
+    const Point operator +(const Point& p) const{
+        return Point(x + p.x, y + p.y, z + p.z);
     }
     
-    const point operator -(const point& p) const{
-        return point(x - p.x, y - p.y, z - p.z);
+    const Point operator -(const Point& p) const{
+        return Point(x - p.x, y - p.y, z - p.z);
     }
     
-    const point operator *(const ld& m) const{
-        return point(m * x, m * y, m * z);
+    const Point operator *(const ld& m) const{
+        return Point(m * x, m * y, m * z);
     }
     
     ld dist2() {
         return x*x + y*y + z*z;
     }
     
-    const bool operator ==(const point& p) const {
-        point d = *this - p;
+    const bool operator ==(const Point& p) const {
+        Point d = *this - p;
         return d.dist2() < (EPS * EPS);
     }
     void printPoint() {
@@ -61,31 +61,48 @@ struct point {
     }
 };
 
-
-//point pInf(1e100,1e100,1e100);
-
-class obj{
-public:
-    virtual std::pair <status,point> checkIntersect(point ray, point start) = 0;
-    int color[3];
+struct Color {
+    int R,G,B;
+    Color() {
+        R = G = B = 0;
+    }
+    Color(int c[3]) {
+        R = c[0];
+        G = c[1];
+        B = c[2];
+    }
+    void operator =(const Color& color) {
+        R = color.R;
+        G = color.G;
+        B = color.B;
+    }
 };
 
-class triangle: public obj{
+
+//Point pInf(1e100,1e100,1e100);
+
+class Figure{
 public:
-    triangle();
-    triangle(int color[3], point _v[3], point norm = point(0,0,0));
-    std::pair <status,point> checkIntersect(point ray, point start);
-    point v[3];
-    point norm;
+    virtual std::pair <status,Point> checkIntersect(Point ray, Point start) = 0;
+    Color color;
 };
 
-//class sphere: public obj{
-//public:
-//    sphere();
-//    sphere(int color[3],point _c, ld _r);
-//    std::pair <status,point> checkIntersect(point ray, point start);
-//    ld r;
-//    point c;
-//};
+class Triangle: public Figure{
+public:
+    Triangle(){};
+    Triangle(int color[3], Point _v[3], Point norm = Point(0,0,0));
+    std::pair <status,Point> checkIntersect(Point ray, Point start);
+    Point v[3];
+    Point norm;
+};
+
+class Sphere: public Figure{
+public:
+    Sphere(){};
+    Sphere(int color[3],Point _centr, ld _radius);
+    std::pair <status,Point> checkIntersect(Point ray, Point start);
+    ld radius;
+    Point centr;
+};
 
 #endif /* raytracingstructs_hpp */

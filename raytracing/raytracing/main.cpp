@@ -10,40 +10,44 @@
 #include <vector>
 
 #include "raytracingstructs.hpp"
+#include "lighting.hpp"
 #define MAX_COLOR 255
+#define INPUT "input.txt" 
+#define OUTPUT "output.ppm"
 
 using namespace std;
 
 typedef unsigned long long ui64;
 
-point observerPoint, controlPoint;
-pair <point,point> dim;
+Point observerPoint, controlPoint;
+pair <Point,Point> dim;
 pair <size_t,size_t> pixelSize;
-vector <obj*> objs;
-vector <vector<vector <int> > > picture;
+vector <Figure*> figures;
+vector <vector<Color> > picture;
+vector <LightSource> lights;
 
-vector <int> getColor(int x, int y) {
-    vector <int> color(3,0);
-    point pixel = controlPoint + ((dim.first * (ld)x) + (dim.second * (ld)y));
+Color getColor(int x, int y) {
+    Color color;
+    Point pixel = controlPoint + ((dim.first * (ld)x) + (dim.second * (ld)y));
 
-    point ray = pixel - observerPoint;
-    if(ray == point(0,0,0)) {
+    Point ray = pixel - observerPoint;
+    if(ray == Point(0,0,0)) {
         return color;
     }
     
     ld firstInterDist = 1e50;
     int firstInterNumb = -1;
     
-    for(int i = 0;i < objs.size(); ++i) {
-        std::pair<status,point> res = objs[i]->checkIntersect(ray, observerPoint);
+    for(int i = 0;i < figures.size(); ++i) {
+        std::pair<status,Point> res = figures[i]->checkIntersect(ray, observerPoint);
 
         if(res.first == NOT_INTERSECT) {
             continue;
         }
         
-        point p = res.second;
+        Point p = res.second;
         
-        point beam = p - observerPoint;
+        Point beam = p - observerPoint;
         
         if(beam.dist2() < firstInterDist) {
             firstInterDist = beam.dist2();
@@ -52,9 +56,13 @@ vector <int> getColor(int x, int y) {
     }
     
     if(firstInterNumb != -1) {
-        for(int i = 0;i < 3;++i) {
-            color[i] = objs[firstInterNumb]->color[i];
-        }
+        color = figures[firstInterNumb]->color;
+    }
+    
+    if(
+    ld intensity = 0;
+    for(int i = 0;i < lights.size(); ++i) {
+        intensity += lights[i].calcIntensityForPoint(intersect);
     }
     
     return color;
@@ -63,20 +71,16 @@ vector <int> getColor(int x, int y) {
 void convertDataToFormatPPM() {
     cout << "P3\n";
     cout << pixelSize.second << " " <<  pixelSize.first << "\n";
-    cout << 255 << "\n";
+    cout << MAX_COLOR << "\n";
     for(int i = 0;i < pixelSize.first;++i) {
         for(int j = 0; j < pixelSize.second;++j) {
-            for(int k = 0;k < 3; ++k) {
-                cout << picture[i][j][k] << " ";
-            }
+            cout << picture[i][j].R << " " << picture[i][j].G << " " << picture[i][j].B;
             cout << "\n";
         }
     }
 }
 
-int main(int argc, const char * argv[]) {
-    freopen("input.txt","r", stdin);
-    freopen("output.ppm","w", stdout);
+void scanData() {
     int n;
     cin >> n;
     for (int i = 0;i < n;++i) {
@@ -87,18 +91,17 @@ int main(int argc, const char * argv[]) {
             cin >> color[i];
         }
         if(!type) {
-            point v[3];
+            Point v[3];
             for(int i = 0;i < 3;++i) {
                 cin >> v[i].x >> v[i].y >> v[i].z;
             }
-            objs.push_back(new triangle(color,v));
+            figures.push_back(new Triangle(color,v));
+        } else {
+            Point c;
+            ld r;
+            cin >> c.x >> c.y >> c.z >> r;
+            figures.push_back(new Sphere(color,c,r));
         }
-//        } else {
-//            point c;
-//            ld r;
-//            cin >> c.x >> c.y >> c.z >> r;
-//            objs.push_back(new sphere(color,c,r));
-//        }
     }
     
     cin >> controlPoint.x >> controlPoint.y >> controlPoint.z;
@@ -106,7 +109,14 @@ int main(int argc, const char * argv[]) {
     cin >> dim.second.x >> dim.second.y >> dim.second.z >> pixelSize.second;
     cin >> observerPoint.x >> observerPoint.y >> observerPoint.z;
     
-    picture.resize(pixelSize.first, vector <vector <int> > (pixelSize.second, vector <int>(3)));
+
+}
+
+int main(int argc, const char * argv[]) {
+    freopen(INPUT,"r", stdin);
+    freopen(OUTPUT,"w", stdout);
+    scanData();
+        picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
     for(int i =0;i < pixelSize.first;++i) {
         for(int j = 0;j < pixelSize.second;++j) {
