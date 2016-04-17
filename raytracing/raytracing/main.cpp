@@ -16,6 +16,7 @@
 #define OUTPUT "output.ppm"
 
 int main(int argc, const char * argv[]) {
+    std::ios_base::sync_with_stdio(false);
     freopen(INPUT, "r", stdin);
     freopen(OUTPUT, "w", stdout);
     SceneProcessor sceneProcessor;

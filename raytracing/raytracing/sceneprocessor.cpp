@@ -8,6 +8,8 @@
 
 #include "sceneprocessor.hpp"
 
+SceneProcessor::SceneProcessor():backgroundLight(LightSource(BACKGROUND_INTENSITY, Point(0,0,0))) {};
+
 void SceneProcessor::scanData() {
     int n;
     cin >> n;
@@ -65,46 +67,24 @@ Color SceneProcessor::calcPixelColor(int x, int y) {
     Color color;
     Point pixel = controlPoint + ((dim.first * (ld)x) + (dim.second * (ld)y));
     Point ray = pixel - observerPoint;
-    Point intersect;
+    
     if(ray == Point(0,0,0)) {
         return color;
     }
     
-    ld firstInterDist = 1e50;
-    int firstInterNumb = -1;
+    std::tuple<Status,Point,Figure*> intersectionData = observerPoint.findFirstIntersect(figures, ray, 1);
+
+    ld brightness = 0;
     
-    for(int i = 0;i < figures.size(); ++i) {
-        std::pair<Status,Point> res = figures[i]->checkIntersect(ray, observerPoint);
-        
-        if(res.first == NOT_INTERSECT) {
-            continue;
+    if(std::get<0>(intersectionData) != NOT_INTERSECT) {
+        color = std::get<2>(intersectionData)->getColor();
+        for(int i = 0;i < lights.size(); ++i) {
+            brightness += lights[i]->findLitPoint(intersectionData, figures);
         }
-        
-        Point p = res.second;
-        
-        Point beam = p - observerPoint;
-        
-        if(beam.dist2() < firstInterDist) {
-            firstInterDist = beam.dist2();
-            firstInterNumb = i;
-            intersect = p;
-        }
-    }
-//    
-//    ld intensity = 0;
-//    if(firstInterNumb != -1) {
-//        color = figures[firstInterNumb]->color;
-//        for(int i = 0;i < lights.size(); ++i) {
-//            intensity += lights[i]->calcIntensityInPoint(intersect, figures);
-//        }
-//    }
-//    assert(intensity >= 0);
-//
-    if(firstInterNumb != -1) {
-        color = figures[firstInterNumb]->getColor();
+//        cout << brightness << endl;
     }
 
-    return color;// * (intensity + backgroundLight.intensity);
+    return color * (brightness + backgroundLight.intensity);
 }
 
 void SceneProcessor::calculatePicture() {
@@ -119,5 +99,6 @@ void SceneProcessor::calculatePicture() {
     }
     
     convertDataToFormatPPM();
+//    (static_cast<Triangle*>(figures[1]))->normalToFrontSide.printPoint();
 }
 

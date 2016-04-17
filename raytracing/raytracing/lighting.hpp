@@ -16,10 +16,9 @@
 
 class LightSource {
 public:
-    LightSource(){};
-    LightSource(ld _intensity, Point centr);
-    ld calcIntensityInPoint(Point targetPoint, std::vector <Figure*>& figures);
-    ld getIntensity(Point targetPoint, Figure* figure);
+    LightSource(ld _intensity, Point _centr);
+    ld findLitPoint(std::tuple<Status,Point,Figure*> targetPointData, std::vector <Figure*>& figures);
+    ld calcBrightness(Point targetPoint, Figure* figure);
     ld intensity;
     Point centr;
 };

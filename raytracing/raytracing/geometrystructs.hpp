@@ -22,6 +22,8 @@ using std::pair;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::make_pair;
+using std::abs;
 
 #define EPS (ld)1e-9
 
@@ -30,6 +32,12 @@ enum Status {
     FRONT_SIDE_INTERSECT,
     BACK_SIDE_INTERSECT
 };
+
+struct Point;
+struct Color;
+class Figure;
+class Point;
+class Sphere;
 
 struct Point {
     ld x,y,z;
@@ -66,6 +74,8 @@ struct Point {
         cout << x << " " << y << " " << z << endl;
         cout << "***********" << endl;
     }
+    
+    std::tuple <Status,Point,Figure*> findFirstIntersect(std::vector <Figure*>& figures, Point ray, ld offsetMult);
 };
 
 struct Color {
@@ -73,6 +83,7 @@ struct Color {
     Color() {
         R = G = B = 0;
     }
+    Color(int _R, int _G, int _B): R(_R), G(_G), B(_B) {}
     Color(int c[3]) {
         R = c[0];
         G = c[1];
@@ -84,14 +95,13 @@ struct Color {
         B = color.B;
     }
     const Color operator *(const ld& m) const{
-        int multColors[3] = {max(0,min(255,int(m * R))), max(0,min(255,int(m * G))), max(0,min(255,int(m * B)))};
-        return Color(multColors);
+        return Color(max(0,min(255,int(m * R))), max(0,min(255,int(m * G))), max(0,min(255,int(m * B))));
     }
 };
 
 class Figure{
 public:
-    virtual pair <Status,Point> checkIntersect(Point ray, Point start) = 0;
+    virtual pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult) = 0;
     virtual Point getFrontSideNormalInPoint(Point p) = 0;
     Color getColor() { return color; }
 protected:
@@ -101,17 +111,17 @@ protected:
 class Triangle: public Figure{
 public:
     Triangle(int color[3], Point _v[3], Point norm = Point(0,0,0));
-    pair <Status,Point> checkIntersect(Point ray, Point start);
+    pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult);
     Point getFrontSideNormalInPoint(Point p);
-private:
     Point normalToFrontSide;
+private:
     Point v[3];
 };
 
 class Sphere: public Figure{
 public:
     Sphere(int color[3],Point _centr, ld _radius);
-    pair <Status,Point> checkIntersect(Point ray, Point start);
+    pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult);
     Point getFrontSideNormalInPoint(Point p);
 private:
     Point centr;
@@ -119,7 +129,7 @@ private:
 };
 
 ld det(ld a, ld b, ld c, ld d);
-ld scal(Point& p1, Point& p2);
-Point vect(Point& a, Point& b);
+ld scal(Point p1, Point p2);
+Point vect(Point a, Point b);
 
 #endif /* geometrystructs_hpp */

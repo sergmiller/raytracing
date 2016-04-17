@@ -12,12 +12,12 @@ ld det(ld a, ld b, ld c, ld d) {
     return a * d - b * c;
 }
 
-ld scal(Point& p1, Point& p2) {
+ld scal(Point p1, Point p2) {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
 
-Point vect(Point& a, Point& b) {
+Point vect(Point a, Point b) {
     Point p;
     p.x = det(a.y, a.z, b.y, b.z);
     p.y = det(a.z, a.x, b.z, b.x);
@@ -58,7 +58,7 @@ int sgn(std::pair<ld,ld> p, ld line[3]) {
     }
 }
 
-std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
+std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld offsetMult) {
     Point intersect;
 //    if(ray.x == ray.y && ray.x == 0) {
 //        printPoint(ray);
@@ -68,30 +68,28 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point v_01 = v[1] - v[0];
     Point v_02 = v[2] - v[0];
 
-    //case if Triangle with measure 0
+    //case if triangle with measure 0
     if(vect(v_01, v_02) == Point(0,0,0)) {
-        return std::make_pair(NOT_INTERSECT,intersect);
+        return make_pair(NOT_INTERSECT,intersect);
     }
     
-    Point norm = vect(v_01, v_02);
+    ld offset = -scal(normalToFrontSide, v[0]);
     
-    ld offset = -scal(norm, v[0]);
-    
-    //case if ray in Triangle's flat
-    if(std::abs(scal(norm,ray)) < EPS) {
-        return std::make_pair(NOT_INTERSECT,intersect);
+    //case if ray in triangle's flat
+    if(abs(scal(normalToFrontSide,ray)) < EPS) {
+        return make_pair(NOT_INTERSECT,intersect);
     }
     
-    ld t = -(scal(norm, start) + offset)/(scal(norm,ray));
+    ld t = -(scal(normalToFrontSide, start) + offset)/(scal(normalToFrontSide,ray));
     
-    //case if Triangle in other side of ray
-    if(t <= 1) {
-        return std::make_pair(NOT_INTERSECT,intersect);
+    //case if triangle in other side of ray
+    if(t <= offsetMult) {
+        return make_pair(NOT_INTERSECT,intersect);
     }
     
     intersect = start + ray * t;
     
-    //check that intersect inside Triangle:
+    //check that intersection inside triangle:
     
     Point v_0inter = intersect - v[0];
     
@@ -104,7 +102,7 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     ld vc[2];
     vc[0] = v_0inter.x;
     vc[1] = v_0inter.y;
-    std::pair <ld,ld> coord = solveMatrix(m, vc);
+    pair <ld,ld> coord = solveMatrix(m, vc);
     
     ld line1[3] = {1,0,0};
     ld line2[3] = {0,1,0};
@@ -112,31 +110,32 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     
     if(sgn(coord,line1) > 0 && sgn(coord, line2) > 0 && sgn(coord, line3) < 0) {
         Status intersectionStatus = (scal(normalToFrontSide, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
-        return std::make_pair(intersectionStatus, intersect);
+        return make_pair(intersectionStatus, intersect);
     } else {
-        //case if intersection outside of Triangle
-        return std::make_pair(NOT_INTERSECT, intersect);
+        //case if intersection outside of triangle
+        return make_pair(NOT_INTERSECT, intersect);
     }
 }
 
-std::pair <Status,Point> Sphere::checkIntersect(Point ray, Point start) {
+std::pair <Status,Point> Sphere::checkIntersect(Point ray, Point start, ld offsetMult) {
     Point intersect;
     ld offset = -scal(ray, centr);
     ld t = -(scal(ray, start) + offset)/(ray.dist2());
     
     //case if Sphere in other side of ray
-    if(t <= 1) {
-        return std::make_pair(NOT_INTERSECT,intersect);
+    if(t <= offsetMult) {
+        return make_pair(NOT_INTERSECT,intersect);
     }
     
-    intersect = start + ray * t;
+    intersect = start + ray * t;//WRONG!!!
     
     Point cv_inter = intersect - centr;
     
     if(cv_inter.dist2() < radius * radius) {
-        return std::make_pair(FRONT_SIDE_INTERSECT, intersect);
+        Status intersectionStatus = (scal(intersect - centr, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
+        return make_pair(intersectionStatus, intersect);
     } else {
-        return std::make_pair(NOT_INTERSECT, Point(0,0,0));
+        return make_pair(NOT_INTERSECT, intersect);
     }
 }
 
@@ -146,6 +145,33 @@ Point Triangle::getFrontSideNormalInPoint(Point p) {
 
 Point Sphere::getFrontSideNormalInPoint(Point p) {
     return p - centr;
+}
+
+std::tuple <Status,Point,Figure*> Point::findFirstIntersect(std::vector <Figure*>& figures, Point ray, ld offsetMult) {
+    Point intersection;
+    Figure* intersectFigure = nullptr;
+    ld intersectDist2 = INFINITY;
+    Status intersectionStatus = NOT_INTERSECT;
+    
+    for(Figure* figure : figures) {
+        pair <Status, Point> intersectData = figure->checkIntersect(ray, *this, offsetMult);
+        if(intersectData.first == NOT_INTERSECT) {
+            continue;
+        }
+        
+        Point vecToCurrentIntersection = intersectData.second - *this;
+        
+        ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
+        
+        if(dist2ToCurrentIntersection < intersectDist2) {
+            intersectionStatus = intersectData.first;
+            intersectDist2 = dist2ToCurrentIntersection;
+            intersection = intersectData.second;
+            intersectFigure = figure;
+        }
+    }
+    
+    return std::make_tuple(intersectionStatus, intersection, intersectFigure);
 }
 
 

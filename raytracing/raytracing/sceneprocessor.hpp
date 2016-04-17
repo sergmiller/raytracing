@@ -20,7 +20,7 @@ using namespace std;
 typedef unsigned long long ui64;
 
 #define MAX_COLOR 255
-#define BACKGROUND_INTENSITY 0.3
+#define BACKGROUND_INTENSITY 0.1
 
 class SceneProcessor {
 private:
@@ -36,6 +36,7 @@ private:
     Color calcPixelColor(int i, int j);
     void convertDataToFormatPPM();
 public:
+    SceneProcessor();
     void calculatePicture();
 };
 
