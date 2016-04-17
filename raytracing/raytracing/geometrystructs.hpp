@@ -1,13 +1,13 @@
 //
-//  raytracingstructs.hpp
+//  geometrystructs.hpp
 //  raytracing
 //
 //  Created by Сергей Миллер on 10.04.16.
 //  Copyright © 2016 sergmiller. All rights reserved.
 //
 
-#ifndef raytracingstructs_hpp
-#define raytracingstructs_hpp
+#ifndef geometrystructs_hpp
+#define geometrystructs_hpp
 
 #include <stdio.h>
 #include <vector>
@@ -16,9 +16,16 @@
 
 typedef long double ld;
 
+using std::max;
+using std::min;
+using std::pair;
+using std::cin;
+using std::cout;
+using std::endl;
+
 #define EPS (ld)1e-9
 
-enum status {
+enum Status {
     NOT_INTERSECT,
     FRONT_SIDE_INTERSECT,
     BACK_SIDE_INTERSECT
@@ -55,9 +62,9 @@ struct Point {
         return d.dist2() < (EPS * EPS);
     }
     void printPoint() {
-        std::cout << "***********" << std::endl;
-        std::cout << x << " " << y << " " << z << std::endl;
-        std::cout << "***********" << std::endl;
+        cout << "***********" << endl;
+        cout << x << " " << y << " " << z << endl;
+        cout << "***********" << endl;
     }
 };
 
@@ -76,33 +83,43 @@ struct Color {
         G = color.G;
         B = color.B;
     }
+    const Color operator *(const ld& m) const{
+        int multColors[3] = {max(0,min(255,int(m * R))), max(0,min(255,int(m * G))), max(0,min(255,int(m * B)))};
+        return Color(multColors);
+    }
 };
-
-
-//Point pInf(1e100,1e100,1e100);
 
 class Figure{
 public:
-    virtual std::pair <status,Point> checkIntersect(Point ray, Point start) = 0;
+    virtual pair <Status,Point> checkIntersect(Point ray, Point start) = 0;
+    virtual Point getFrontSideNormalInPoint(Point p) = 0;
+    Color getColor() { return color; }
+protected:
     Color color;
 };
 
 class Triangle: public Figure{
 public:
-    Triangle(){};
     Triangle(int color[3], Point _v[3], Point norm = Point(0,0,0));
-    std::pair <status,Point> checkIntersect(Point ray, Point start);
+    pair <Status,Point> checkIntersect(Point ray, Point start);
+    Point getFrontSideNormalInPoint(Point p);
+private:
+    Point normalToFrontSide;
     Point v[3];
-    Point norm;
 };
 
 class Sphere: public Figure{
 public:
-    Sphere(){};
     Sphere(int color[3],Point _centr, ld _radius);
-    std::pair <status,Point> checkIntersect(Point ray, Point start);
-    ld radius;
+    pair <Status,Point> checkIntersect(Point ray, Point start);
+    Point getFrontSideNormalInPoint(Point p);
+private:
     Point centr;
+    ld radius;
 };
 
-#endif /* raytracingstructs_hpp */
+ld det(ld a, ld b, ld c, ld d);
+ld scal(Point& p1, Point& p2);
+Point vect(Point& a, Point& b);
+
+#endif /* geometrystructs_hpp */

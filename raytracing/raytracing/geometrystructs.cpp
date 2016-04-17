@@ -1,20 +1,21 @@
 //
-//  raytracingstructs.cpp
+//  geometrystructs.cpp
 //  raytracing
 //
 //  Created by Сергей Миллер on 10.04.16.
 //  Copyright © 2016 sergmiller. All rights reserved.
 //
 
-#include "raytracingstructs.hpp"
+#include "geometrystructs.hpp"
+
+ld det(ld a, ld b, ld c, ld d) {
+    return a * d - b * c;
+}
 
 ld scal(Point& p1, Point& p2) {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
-ld det(ld a, ld b, ld c, ld d) {
-    return a * d - b * c;
-}
 
 Point vect(Point& a, Point& b) {
     Point p;
@@ -24,10 +25,16 @@ Point vect(Point& a, Point& b) {
     return p;
 }
 
-Triangle::Triangle(int _color[3], Point _v[3], Point norm): norm(norm) {
+Triangle::Triangle(int _color[3], Point _v[3], Point normal): normalToFrontSide(normal) {
     color = Color(_color);
     for(int i = 0;i < 3;++i) {
         v[i] = _v[i];
+    }
+    if(normalToFrontSide == Point(0,0,0)) {
+        Point vec1 = v[1] - v[0];
+        Point vec2 = v[2] - v[0];
+        
+        normalToFrontSide = vect(vec1, vec2);
     }
 }
 
@@ -51,7 +58,7 @@ int sgn(std::pair<ld,ld> p, ld line[3]) {
     }
 }
 
-std::pair <status,Point> Triangle::checkIntersect(Point ray, Point start) {
+std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point intersect;
 //    if(ray.x == ray.y && ray.x == 0) {
 //        printPoint(ray);
@@ -104,14 +111,15 @@ std::pair <status,Point> Triangle::checkIntersect(Point ray, Point start) {
     ld line3[3] = {1,1,-1};
     
     if(sgn(coord,line1) > 0 && sgn(coord, line2) > 0 && sgn(coord, line3) < 0) {
-        return std::make_pair(FRONT_SIDE_INTERSECT, intersect);
+        Status intersectionStatus = (scal(normalToFrontSide, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
+        return std::make_pair(intersectionStatus, intersect);
     } else {
         //case if intersection outside of Triangle
         return std::make_pair(NOT_INTERSECT, intersect);
     }
 }
 
-std::pair <status,Point> Sphere::checkIntersect(Point ray, Point start) {
+std::pair <Status,Point> Sphere::checkIntersect(Point ray, Point start) {
     Point intersect;
     ld offset = -scal(ray, centr);
     ld t = -(scal(ray, start) + offset)/(ray.dist2());
@@ -132,8 +140,13 @@ std::pair <status,Point> Sphere::checkIntersect(Point ray, Point start) {
     }
 }
 
+Point Triangle::getFrontSideNormalInPoint(Point p) {
+    return normalToFrontSide;
+}
 
-
+Point Sphere::getFrontSideNormalInPoint(Point p) {
+    return p - centr;
+}
 
 
 

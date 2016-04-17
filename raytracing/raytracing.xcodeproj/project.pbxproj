@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B91FA0581CC3F28100C36FB5 /* sceneprocessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B91FA0561CC3F28100C36FB5 /* sceneprocessor.cpp */; };
 		B95D242E1CBAE7D000BA20FE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B95D242D1CBAE7D000BA20FE /* main.cpp */; };
-		B95D24361CBAEC4400BA20FE /* raytracingstructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B95D24341CBAEC4400BA20FE /* raytracingstructs.cpp */; };
+		B95D24361CBAEC4400BA20FE /* geometrystructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */; };
 		B9B5DDB81CC0DF9900CBE82B /* lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */; };
 /* End PBXBuildFile section */
 
@@ -25,10 +26,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B91FA0561CC3F28100C36FB5 /* sceneprocessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sceneprocessor.cpp; sourceTree = "<group>"; };
+		B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sceneprocessor.hpp; sourceTree = "<group>"; };
 		B95D242A1CBAE7D000BA20FE /* raytracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = raytracing; sourceTree = BUILT_PRODUCTS_DIR; };
 		B95D242D1CBAE7D000BA20FE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		B95D24341CBAEC4400BA20FE /* raytracingstructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raytracingstructs.cpp; sourceTree = "<group>"; };
-		B95D24351CBAEC4400BA20FE /* raytracingstructs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raytracingstructs.hpp; sourceTree = "<group>"; };
+		B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometrystructs.cpp; sourceTree = "<group>"; };
+		B95D24351CBAEC4400BA20FE /* geometrystructs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = geometrystructs.hpp; sourceTree = "<group>"; };
 		B95D24371CBAF7F900BA20FE /* input.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = input.txt; sourceTree = "<group>"; };
 		B9A9A55F1CC006C3001E1EB8 /* output.ppm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.ppm; sourceTree = "<group>"; };
 		B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lighting.cpp; sourceTree = "<group>"; };
@@ -67,11 +70,13 @@
 			children = (
 				B9A9A55F1CC006C3001E1EB8 /* output.ppm */,
 				B95D242D1CBAE7D000BA20FE /* main.cpp */,
-				B95D24341CBAEC4400BA20FE /* raytracingstructs.cpp */,
-				B95D24351CBAEC4400BA20FE /* raytracingstructs.hpp */,
+				B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */,
+				B95D24351CBAEC4400BA20FE /* geometrystructs.hpp */,
 				B95D24371CBAF7F900BA20FE /* input.txt */,
 				B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */,
 				B9B5DDB71CC0DF9900CBE82B /* lighting.hpp */,
+				B91FA0561CC3F28100C36FB5 /* sceneprocessor.cpp */,
+				B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */,
 			);
 			path = raytracing;
 			sourceTree = "<group>";
@@ -132,7 +137,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B95D24361CBAEC4400BA20FE /* raytracingstructs.cpp in Sources */,
+				B95D24361CBAEC4400BA20FE /* geometrystructs.cpp in Sources */,
+				B91FA0581CC3F28100C36FB5 /* sceneprocessor.cpp in Sources */,
 				B95D242E1CBAE7D000BA20FE /* main.cpp in Sources */,
 				B9B5DDB81CC0DF9900CBE82B /* lighting.cpp in Sources */,
 			);

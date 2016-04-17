@@ -10,12 +10,16 @@
 #define lighting_hpp
 
 #include <stdio.h>
-#include "raytracingstructs.hpp"
+#include <vector>
+#include "geometrystructs.hpp"
+
 
 class LightSource {
 public:
     LightSource(){};
     LightSource(ld _intensity, Point centr);
+    ld calcIntensityInPoint(Point targetPoint, std::vector <Figure*>& figures);
+    ld getIntensity(Point targetPoint, Figure* figure);
     ld intensity;
     Point centr;
 };
