@@ -7,3 +7,7 @@ simple ray tracing, c++ project for MIPT programming course semester 4
 with shadows:
 (4 light sources)
 ![alt tag](http://savepic.ru/9381589.png)
+
+all figures inside big green sphere:
+(5 light sources)
+![alt tag](http://savepic.ru/9391865.png)
