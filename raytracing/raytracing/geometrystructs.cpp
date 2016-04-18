@@ -12,6 +12,10 @@ ld det(ld a, ld b, ld c, ld d) {
     return a * d - b * c;
 }
 
+ld det(ld a0[3], ld a1[3], ld a2[3]) {
+    return a0[0] * det(a1[1], a1[2], a2[1], a2[2]) - a0[1] * det(a1[0], a1[2], a2[0], a2[2]) + a0[2] * det(a1[0], a1[1], a2[0], a2[1]);
+}
+
 ld scal(Point p1, Point p2) {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
@@ -42,11 +46,12 @@ Sphere::Sphere(int _color[3],Point _centr, ld _radius): centr(_centr), radius(_r
     color = Color(_color);
 }
 
-std::pair<ld,ld> solveMatrix(ld m[2][2], ld v[2]) {
-    ld d = det(m[0][0], m[0][1], m[1][0],m[1][1]);
-    ld d1 = det(v[0], m[0][1], v[1], m[1][1]);
-    ld d2 = det(m[0][0], v[0], m[1][0], v[1]);
-    return std::make_pair(d1/d, d2/d);
+std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]) {
+    ld d = det(m[0], m[1], m[2]);
+    ld d0 = det(v, m[1], m[2]);
+    ld d1 = det(m[0], v, m[2]);
+    ld d2 = det(m[0], m[1], v);
+    return std::make_tuple(d0/d, d1/d, d2/d);
 }
 
 int sgn(std::pair<ld,ld> p, ld line[3]) {
@@ -58,7 +63,7 @@ int sgn(std::pair<ld,ld> p, ld line[3]) {
     }
 }
 
-std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld offsetMult) {
+pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld offsetMult) {
     Point intersect;
 //    if(ray.x == ray.y && ray.x == 0) {
 //        printPoint(ray);
@@ -93,16 +98,23 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld off
     
     Point v_0inter = intersect - v[0];
     
-    ld m[2][2];
+    ld m[3][3];
     m[0][0] = v_01.x;
-    m[0][1] = v_02.x;
-    m[1][0] = v_01.y;
+    m[0][1] = v_01.y;
+    m[0][2] = v_01.z;
+    m[1][0] = v_02.x;
     m[1][1] = v_02.y;
+    m[1][2] = v_02.z;
+    m[2][0] = normalToFrontSide.x;
+    m[2][1] = normalToFrontSide.y;
+    m[2][2] = normalToFrontSide.z;
     
-    ld vc[2];
+    ld vc[3];
     vc[0] = v_0inter.x;
     vc[1] = v_0inter.y;
-    pair <ld,ld> coord = solveMatrix(m, vc);
+    vc[2] = v_0inter.z;
+    std::tuple <ld,ld,ld> solution = solveMatrix(m, vc);
+    pair<ld,ld> coord = make_pair(std::get<0>(solution), std::get<1>(solution));
     
     ld line1[3] = {1,0,0};
     ld line2[3] = {0,1,0};

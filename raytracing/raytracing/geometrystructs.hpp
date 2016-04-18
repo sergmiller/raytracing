@@ -128,6 +128,7 @@ private:
 };
 
 ld det(ld a, ld b, ld c, ld d);
+ld det(ld a0[3], ld a1[3], ld a2[3]);
 ld scal(Point p1, Point p2);
 Point vect(Point a, Point b);
 
