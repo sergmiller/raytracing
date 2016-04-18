@@ -51,7 +51,7 @@ std::pair<ld,ld> solveMatrix(ld m[2][2], ld v[2]) {
 
 int sgn(std::pair<ld,ld> p, ld line[3]) {
     ld res = line[0] * p.first + line[1] * p.second  + line[2];
-    if(std::abs(res) < EPS) {
+    if(std::fabs(res) < EPS) {
         return 0;
     } else {
         return pow(-1, (res < 0));
@@ -76,7 +76,7 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld off
     ld offset = -scal(normalToFrontSide, v[0]);
     
     //case if ray in triangle's flat
-    if(abs(scal(normalToFrontSide,ray)) < EPS) {
+    if(std::fabs(scal(normalToFrontSide,ray)) < EPS) {
         return make_pair(NOT_INTERSECT,intersect);
     }
     
@@ -108,7 +108,7 @@ std::pair <Status,Point> Triangle::checkIntersect(Point ray, Point start, ld off
     ld line2[3] = {0,1,0};
     ld line3[3] = {1,1,-1};
     
-    if(sgn(coord,line1) > 0 && sgn(coord, line2) > 0 && sgn(coord, line3) < 0) {
+    if(sgn(coord,line1) >= 0 && sgn(coord, line2) >= 0 && sgn(coord, line3) <= 0) {
         Status intersectionStatus = (scal(normalToFrontSide, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
         return make_pair(intersectionStatus, intersect);
     } else {
@@ -122,16 +122,28 @@ std::pair <Status,Point> Sphere::checkIntersect(Point ray, Point start, ld offse
     ld offset = -scal(ray, centr);
     ld t = -(scal(ray, start) + offset)/(ray.dist2());
     
+
+    Point projection = start + ray * t;
+    
+    Point v_inter = projection - centr;
+    
+    ld offsetInsideSphere = sqrt((radius*radius - v_inter.dist2())/ray.dist2());
+    
+    t -= offsetInsideSphere;
+    
+    //check case if start point inside sphere
+    if(t < offsetMult) {
+        t += (offsetInsideSphere * 2);
+    }
+    
     //case if Sphere in other side of ray
-    if(t <= offsetMult) {
+    if(t < offsetMult) {
         return make_pair(NOT_INTERSECT,intersect);
     }
     
-    intersect = start + ray * t;//WRONG!!!
-    
-    Point cv_inter = intersect - centr;
-    
-    if(cv_inter.dist2() < radius * radius) {
+    intersect = start + ray * t;
+
+    if(v_inter.dist2() < radius * radius) {
         Status intersectionStatus = (scal(intersect - centr, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
         return make_pair(intersectionStatus, intersect);
     } else {
@@ -147,13 +159,13 @@ Point Sphere::getFrontSideNormalInPoint(Point p) {
     return p - centr;
 }
 
-std::tuple <Status,Point,Figure*> Point::findFirstIntersect(std::vector <Figure*>& figures, Point ray, ld offsetMult) {
+std::tuple <Status,Point,std::shared_ptr<Figure>> Point::findFirstIntersect(std::vector <std::shared_ptr<Figure>>& figures, Point ray, ld offsetMult) {
     Point intersection;
-    Figure* intersectFigure = nullptr;
+    std::shared_ptr<Figure> intersectFigure = nullptr;
     ld intersectDist2 = INFINITY;
     Status intersectionStatus = NOT_INTERSECT;
     
-    for(Figure* figure : figures) {
+    for(std::shared_ptr<Figure> figure : figures) {
         pair <Status, Point> intersectData = figure->checkIntersect(ray, *this, offsetMult);
         if(intersectData.first == NOT_INTERSECT) {
             continue;

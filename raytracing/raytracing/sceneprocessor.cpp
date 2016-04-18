@@ -25,12 +25,12 @@ void SceneProcessor::scanData() {
             for(int i = 0;i < 3;++i) {
                 cin >> v[i].x >> v[i].y >> v[i].z;
             }
-            figures.push_back(new Triangle(color,v));
+            figures.push_back(std::shared_ptr<Figure>(new Triangle(color,v)));
         } else {
             Point c;
             ld r;
             cin >> c.x >> c.y >> c.z >> r;
-            figures.push_back(new Sphere(color,c,r));
+            figures.push_back(std::shared_ptr<Figure>(new Sphere(color,c,r)));
         }
     }
     
@@ -72,7 +72,7 @@ Color SceneProcessor::calcPixelColor(int x, int y) {
         return color;
     }
     
-    std::tuple<Status,Point,Figure*> intersectionData = observerPoint.findFirstIntersect(figures, ray, 1);
+    std::tuple<Status,Point,std::shared_ptr<Figure>> intersectionData = observerPoint.findFirstIntersect(figures, ray, 1);
 
     ld brightness = 0;
     

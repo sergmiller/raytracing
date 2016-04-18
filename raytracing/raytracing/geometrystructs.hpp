@@ -16,14 +16,13 @@
 
 typedef long double ld;
 
-using std::max;
-using std::min;
+using std::fmax;
+using std::fmin;
 using std::pair;
 using std::cin;
 using std::cout;
 using std::endl;
 using std::make_pair;
-using std::abs;
 
 #define EPS (ld)1e-9
 
@@ -75,7 +74,7 @@ struct Point {
         cout << "***********" << endl;
     }
     
-    std::tuple <Status,Point,Figure*> findFirstIntersect(std::vector <Figure*>& figures, Point ray, ld offsetMult);
+    std::tuple <Status,Point,std::shared_ptr<Figure>> findFirstIntersect(std::vector <std::shared_ptr<Figure>>& figures, Point ray, ld offsetMult);
 };
 
 struct Color {
@@ -95,7 +94,7 @@ struct Color {
         B = color.B;
     }
     const Color operator *(const ld& m) const{
-        return Color(max(0,min(255,int(m * R))), max(0,min(255,int(m * G))), max(0,min(255,int(m * B))));
+        return Color(int(fmax(0.0,fmin(255.0,m * R))), int(fmax(0,fmin(255,m * G))), int(fmax(0,fmin(255,m * B))));
     }
 };
 

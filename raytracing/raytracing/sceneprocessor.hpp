@@ -17,8 +17,6 @@
 
 using namespace std;
 
-typedef unsigned long long ui64;
-
 #define MAX_COLOR 255
 #define BACKGROUND_INTENSITY 0.1
 
@@ -27,13 +25,13 @@ private:
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
-    vector <Figure*> figures;
+    vector <std::shared_ptr<Figure> > figures;
     vector <vector<Color> > picture;
     vector <LightSource*> lights;
     LightSource backgroundLight;
 
     void scanData();
-    Color calcPixelColor(int i, int j);
+    Color calcPixelColor(int x, int y);
     void convertDataToFormatPPM();
 public:
     SceneProcessor();
@@ -41,3 +39,14 @@ public:
 };
 
 #endif /* sceneprocessor_hpp */
+
+//1
+//1
+//0 255 0
+//0 0 0 10000
+//1
+//4000 -8000 -2000 1e6
+//-1000 0 750
+//0 0 -1 1500
+//0.8944 0.447 0 2000
+//-50000 70000 9000
