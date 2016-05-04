@@ -9,18 +9,19 @@
 #include "lighting.hpp"
 #include <cassert>
 
-LightSource::LightSource(ld _intensity, Point _centr): intensity(_intensity),  centr(_centr) {}
+LightSource::LightSource(ld _intensity, Point _centr, Kdtree* _kdtree): intensity(_intensity),  centr(_centr), kdtree(_kdtree) {}
 
 ld LightSource::findLitPoint(std::tuple<Status,Point,std::shared_ptr<Figure>> targetPointData, std::vector <std::shared_ptr<Figure>>& figures) {
     std::shared_ptr<Figure> targetFigure = std::get<2>(targetPointData);
     Point targetPoint = std::get<1>(targetPointData);
     Status targetStatus = std::get<0>(targetPointData);
     Point ray = (targetPoint - centr);
+    
     if(ray == Point(0,0,0)) {
         return 0;
     }
     
-    std::tuple<Status,Point,std::shared_ptr<Figure>> realIntersectionData = centr.findFirstIntersect(figures, ray, 0);
+    std::tuple<Status,Point,std::shared_ptr<Figure>> realIntersectionData = kdtree->find(ray,centr);
 
     std::shared_ptr<Figure> firstInterFigure = std::get<2>(realIntersectionData);
     Point firstIntersection = std::get<1>(realIntersectionData);

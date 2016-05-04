@@ -14,6 +14,7 @@
 #include <cassert>
 #include "geometrystructs.hpp"
 #include "lighting.hpp"
+#include "kdtree.hpp"
 
 using namespace std;
 
@@ -26,16 +27,18 @@ private:
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
     vector <std::shared_ptr<Figure> > figures;
+    Kdtree* kdtree;
     vector <vector<Color> > picture;
     vector <LightSource*> lights;
-    LightSource backgroundLight;
+    ld backgroundIntensity;
 
     void scanData();
     Color calcPixelColor(int x, int y);
     void convertDataToFormatPPM();
 public:
-    SceneProcessor();
+    SceneProcessor(ld intensity = 0);
     void calculatePicture();
 };
 
 #endif /* sceneprocessor_hpp */
+//-400 400 200 2e5

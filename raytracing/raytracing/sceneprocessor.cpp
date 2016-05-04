@@ -8,7 +8,7 @@
 
 #include "sceneprocessor.hpp"
 
-SceneProcessor::SceneProcessor():backgroundLight(LightSource(BACKGROUND_INTENSITY, Point(0,0,0))) {};
+SceneProcessor::SceneProcessor(ld intensity):backgroundIntensity(intensity) {};
 
 void SceneProcessor::scanData() {
     int n;
@@ -19,6 +19,7 @@ void SceneProcessor::scanData() {
         cin >> type;
         for(int i = 0;i < 3;++i) {
             cin >> color[i];
+            color[i]  = std::max(1,color[i]);
         }
         if(!type) {
             Point v[3];
@@ -34,13 +35,30 @@ void SceneProcessor::scanData() {
         }
     }
     
+    /***init kdtree******/
+    
+    ld l[3] = {1e100,1e100,1e100};
+    ld r[3] = {-1e100,-1e100,-1e100};
+    
+    for(int i = 0; i <figures.size(); ++i) {
+        for(int d = 0; d < 3;++d) {
+            l[d] = fmin(l[d],figures[i]->getLeftBound(d));
+            r[d] = fmax(r[d],figures[i]->getRightBound(d));
+        }
+    }
+    
+    Point leftBound(l), rightBound(r);
+    
+    kdtree = new Kdtree(figures,leftBound,rightBound);
+    /********************/
+    
     int k;
     cin >> k;
     for(int i = 0;i < k;++i) {
         Point c;
         ld intense;
         cin >> c.x >> c.y >> c.z >> intense;
-        lights.push_back(new LightSource(intense,c));
+        lights.push_back(new LightSource(intense,c, kdtree));
     }
     
     cin >> controlPoint.x >> controlPoint.y >> controlPoint.z;
@@ -72,7 +90,7 @@ Color SceneProcessor::calcPixelColor(int x, int y) {
         return color;
     }
     
-    std::tuple<Status,Point,std::shared_ptr<Figure>> intersectionData = observerPoint.findFirstIntersect(figures, ray, 1);
+    std::tuple<Status,Point,std::shared_ptr<Figure>> intersectionData = kdtree->find(ray, pixel);
 
     ld brightness = 0;
     
@@ -84,16 +102,18 @@ Color SceneProcessor::calcPixelColor(int x, int y) {
 //        cout << brightness << endl;
     }
 
-    return color * (brightness + backgroundLight.intensity);
+    return color * (brightness + backgroundIntensity);
 }
 
 void SceneProcessor::calculatePicture() {
     scanData();
     
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
+
     
     for(int i =0;i < pixelSize.first;++i) {
         for(int j = 0;j < pixelSize.second;++j) {
+//            cout << i << " " << j << endl;
             picture[i][j] = calcPixelColor(i,j);
         }
     }

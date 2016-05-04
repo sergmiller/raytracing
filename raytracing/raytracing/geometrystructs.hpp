@@ -48,6 +48,11 @@ struct Point {
         y = _y;
         z = _z;
     }
+    Point(ld d[3]) {
+        x = d[0];
+        y = d[1];
+        z = d[2];
+    }
     const Point operator +(const Point& p) const{
         return Point(x + p.x, y + p.y, z + p.z);
     }
@@ -58,6 +63,19 @@ struct Point {
     
     const Point operator *(const ld& m) const{
         return Point(m * x, m * y, m * z);
+    }
+    
+    const ld operator[](const int i) const {
+        switch(i) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+            default:
+                return 0;
+        }
     }
     
     ld dist2() {
@@ -74,13 +92,13 @@ struct Point {
         cout << "***********" << endl;
     }
     
-    std::tuple <Status,Point,std::shared_ptr<Figure>> findFirstIntersect(std::vector <std::shared_ptr<Figure>>& figures, Point ray, ld offsetMult);
+//    std::tuple <Status,Point,std::shared_ptr<Figure>> findFirstIntersect(std::vector <std::shared_ptr<Figure>>& figures, Point ray);
 };
 
 struct Color {
     int R,G,B;
     Color() {
-        R = G = B = 0;
+        R = G = B = 1;
     }
     Color(int _R, int _G, int _B): R(_R), G(_G), B(_B) {}
     Color(int c[3]) {
@@ -94,23 +112,29 @@ struct Color {
         B = color.B;
     }
     const Color operator *(const ld& m) const{
-        return Color(int(fmax(0.0,fmin(255.0,m * R))), int(fmax(0,fmin(255,m * G))), int(fmax(0,fmin(255,m * B))));
+        return Color(int(fmax(1,fmin(255.0,m * R))), int(fmax(1,fmin(255,m * G))), int(fmax(1,fmin(255,m * B))));
     }
 };
 
 class Figure{
 public:
-    virtual pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult) = 0;
+    virtual pair <Status,Point> checkIntersect(Point ray, Point start) = 0;
     virtual Point getFrontSideNormalInPoint(Point p) = 0;
     Color getColor() { return color; }
+    ld getRightBound(int dim) { return rightBound[dim];}
+    ld getLeftBound(int dim) { return rightBound[dim];}
+    Point getRightBound() { return rightBound;}
+    Point getLeftBound() { return rightBound;}
 protected:
     Color color;
+    Point rightBound;
+    Point leftBound;
 };
 
 class Triangle: public Figure{
 public:
     Triangle(int color[3], Point _v[3], Point norm = Point(0,0,0));
-    pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult);
+    pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
     Point normalToFrontSide;
 private:
@@ -120,7 +144,7 @@ private:
 class Sphere: public Figure{
 public:
     Sphere(int color[3],Point _centr, ld _radius);
-    pair <Status,Point> checkIntersect(Point ray, Point start, ld offsetMult);
+    pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
 private:
     Point centr;
@@ -131,5 +155,7 @@ ld det(ld a, ld b, ld c, ld d);
 ld det(ld a0[3], ld a1[3], ld a2[3]);
 ld scal(Point p1, Point p2);
 Point vect(Point a, Point b);
+
+ld getSurface(Point l, Point r);
 
 #endif /* geometrystructs_hpp */

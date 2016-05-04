@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <chrono>
 
 #include "sceneprocessor.hpp"
 
@@ -18,8 +19,15 @@
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
     freopen(INPUT, "r", stdin);
-    freopen(OUTPUT, "w", stdout);
-    SceneProcessor sceneProcessor;
+    FILE* out = freopen(OUTPUT, "w", stdout);
+    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY);
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
     sceneProcessor.calculatePicture();
+    end = std::chrono::system_clock::now();
+    int64_t elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+    fclose(out);
+    freopen("out.txt", "w", stdout);
+    std::cout << "elapsed seconds: " << elapsed_milliseconds/1000 << std::endl;
     return 0;
 }
