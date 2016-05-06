@@ -90,7 +90,7 @@ Color SceneProcessor::calcPixelColor(int x, int y) {
         return color;
     }
     
-    std::tuple<Status,Point,std::shared_ptr<Figure>> intersectionData = kdtree->find(ray, pixel);
+    IntersectionData intersectionData = kdtree->find(ray, pixel);
 
     ld brightness = 0;
     

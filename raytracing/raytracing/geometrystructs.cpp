@@ -16,11 +16,27 @@ ld det(ld a0[3], ld a1[3], ld a2[3]) {
     return a0[0] * det(a1[1], a1[2], a2[1], a2[2]) - a0[1] * det(a1[0], a1[2], a2[0], a2[2]) + a0[2] * det(a1[0], a1[1], a2[0], a2[1]);
 }
 
-ld scal(Point p1, Point p2) {
+ld scal(Point& p1, Point& p2) {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
-Point vect(Point a, Point b) {
+void packingRatio(pair<ld,ld>& r) {
+    if(r.first < 0 && r.second < 0) {
+        r.first = r.second = -1;
+        return;
+    }
+    
+    if(r.second < 0) {
+        r.second = -1;
+        return;
+    }
+    
+    if(r.first > r.second) {
+        std::swap(r.first, r.second);
+    }
+}
+
+Point vect(Point& a, Point& b) {
     Point p;
     p.x = det(a.y, a.z, b.y, b.z);
     p.y = det(a.z, a.x, b.z, b.x);
@@ -87,11 +103,7 @@ int sgn(std::pair<ld,ld> p, ld line[3]) {
 
 pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point intersect;
-//    if(ray.x == ray.y && ray.x == 0) {
-//        printPoint(ray);
-//        printPoint(start);
-//        return std::make_pair(NOT_INTERSECT,intersect);
-//    }
+
     Point v_01 = v[1] - v[0];
     Point v_02 = v[2] - v[0];
 
@@ -180,7 +192,8 @@ std::pair <Status,Point> Sphere::checkIntersect(Point ray, Point start) {
     intersect = start + ray * t;
 
     if(v_inter.dist2() < radius * radius) {
-        Status intersectionStatus = (scal(intersect - centr, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
+        Point dir = intersect - centr;
+        Status intersectionStatus = (scal(dir, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
         return make_pair(intersectionStatus, intersect);
     } else {
         return make_pair(NOT_INTERSECT, intersect);
@@ -194,11 +207,6 @@ Point Triangle::getFrontSideNormalInPoint(Point p) {
 Point Sphere::getFrontSideNormalInPoint(Point p) {
     return p - centr;
 }
-
-
-
-
-
 
 
 

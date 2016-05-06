@@ -11,22 +11,21 @@
 
 LightSource::LightSource(ld _intensity, Point _centr, Kdtree* _kdtree): intensity(_intensity),  centr(_centr), kdtree(_kdtree) {}
 
-ld LightSource::findLitPoint(std::tuple<Status,Point,std::shared_ptr<Figure>> targetPointData, std::vector <std::shared_ptr<Figure>>& figures) {
-    std::shared_ptr<Figure> targetFigure = std::get<2>(targetPointData);
-    Point targetPoint = std::get<1>(targetPointData);
-    Status targetStatus = std::get<0>(targetPointData);
+ld LightSource::findLitPoint(IntersectionData targetPointData, std::vector <std::shared_ptr<Figure>>& figures) {
+    std::shared_ptr<Figure> targetFigure = figure(targetPointData);
+    Point targetPoint = point(targetPointData);
+    Status targetStatus = status(targetPointData);
     Point ray = (targetPoint - centr);
     
     if(ray == Point(0,0,0)) {
         return 0;
     }
     
-    std::tuple<Status,Point,std::shared_ptr<Figure>> realIntersectionData = kdtree->find(ray,centr);
+    IntersectionData realIntersectionData = kdtree->find(ray,centr);
 
-    std::shared_ptr<Figure> firstInterFigure = std::get<2>(realIntersectionData);
-    Point firstIntersection = std::get<1>(realIntersectionData);
-    Status firstInterStatus = std::get<0>(realIntersectionData);
-    
+    std::shared_ptr<Figure> firstInterFigure = figure(realIntersectionData);
+    Point firstIntersection = point(realIntersectionData);
+    Status firstInterStatus = status(realIntersectionData);
 //    cout << endl;
 //    firstIntersection.printPoint();
 //    targetPoint.printPoint();

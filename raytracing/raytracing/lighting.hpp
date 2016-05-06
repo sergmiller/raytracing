@@ -18,7 +18,7 @@
 class LightSource {
 public:
     LightSource(ld _intensity, Point _centr, Kdtree* _kdtree);
-    ld findLitPoint(std::tuple<Status,Point,std::shared_ptr<Figure>> targetPointData, std::vector <std::shared_ptr<Figure>>& figures);
+    ld findLitPoint(IntersectionData targetPointData, std::vector <std::shared_ptr<Figure>>& figures);
     ld calcBrightness(Point targetPoint, std::shared_ptr<Figure> figure);
     ld intensity;
     Kdtree* kdtree;

@@ -19,7 +19,9 @@
 class Kdtree {
 public:
     Kdtree(std::vector<std::shared_ptr<Figure> >& _data, Point& _leftBound, Point& _rightBound, int dim_out = -1, int depth = 1);
-    std::tuple<Status,Point,std::shared_ptr<Figure>> find(Point& ray, Point& start);
+    void find(Point& ray, Point& start, ld& bestDist, IntersectionData& bestIntersection, std::pair<ld,ld>  boundingBoxIntersection);
+    IntersectionData find(Point& ray, Point& start);
+    bool pointInside(Point& point);
     ~Kdtree();
 private:
     int dim;
@@ -27,9 +29,11 @@ private:
     Kdtree* rightTree;
     Point leftBound;
     Point rightBound;
-    size_t midIndex;
-    ld getFirstIntersect(Point start, Point ray);
-    std::vector <std::shared_ptr<Figure>>& data;
+    ld median;
+    int cutIndex;
+    std::pair<ld,ld> getIntersectionRatioWithBoundingBox(Point& ray, Point& start);
+    std::vector <std::shared_ptr<Figure>> data;
+    ld getIntersectionRatioWithMedianFlat(Point& ray, Point& start);
 };
 
 #endif /* kdtree_hpp */
