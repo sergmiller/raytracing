@@ -42,7 +42,7 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     
     size_t size = data.size();
     
-    cutIndex = size/2;
+    cutIndex = -1;
     
     if(depth > MAX_DEPTH || size <= 1) {
         leftTree = nullptr;
@@ -114,6 +114,7 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
         return;
     }
     
+    cutIndex = size/2;
     leftTree = new Kdtree(dataLeft,leftBound,boundForLeft,dim,depth+1,notDiv);
     rightTree = new Kdtree(dataRight,boundForRight,rightBound,dim,depth+1,notDiv);
 }
@@ -224,22 +225,22 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
     if((intersectionRatio.second >= 0 && dist2ToInter > bestDist2) || data.empty()) {
         return;
     }
-
-    pair <Status, Point> intersectData = data[cutIndex]->checkIntersect(ray, start);
-    if(intersectData.first != NOT_INTERSECT) {
-        Point vecToCurrentIntersection = intersectData.second - start;
-        
-        ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
-        
-        if(dist2ToCurrentIntersection < bestDist2) {
-            bestDist2 = dist2ToCurrentIntersection;
-            status(bestIntersection) = intersectData.first;
-            point(bestIntersection) = intersectData.second;
-            figure(bestIntersection) = data[cutIndex];
-        }
-    }
     
-    if(leftTree) {
+    if(cutIndex != -1) {
+        pair <Status, Point> intersectData = data[cutIndex]->checkIntersect(ray, start);
+        if(intersectData.first != NOT_INTERSECT) {
+            Point vecToCurrentIntersection = intersectData.second - start;
+            
+            ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
+            
+            if(dist2ToCurrentIntersection < bestDist2) {
+                bestDist2 = dist2ToCurrentIntersection;
+                status(bestIntersection) = intersectData.first;
+                point(bestIntersection) = intersectData.second;
+                figure(bestIntersection) = data[cutIndex];
+            }
+        }
+    
         ld medianIntersectRatio = getIntersectionRatioWithMedianFlat(ray, start);
         
         pair<ld,ld> ratioLeftBox = std::make_pair(-1,-1);

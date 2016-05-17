@@ -129,17 +129,15 @@ void SceneProcessor::scanCameraMetaData() {
 }
 
 void SceneProcessor::initKDtree() {
-    ld l[3] = {INFINITY,INFINITY,INFINITY};
-    ld r[3] = {-INFINITY,-INFINITY,-INFINITY};
+    Point leftBound(INFINITY,INFINITY,INFINITY);
+    Point rightBound(-INFINITY,-INFINITY,-INFINITY);
     
     for(int i = 0; i < figures.size(); ++i) {
-        for(int d = 0; d < 3;++d) {
-            l[d] = fmin(l[d],figures[i]->getLeftBound(d));
-            r[d] = fmax(r[d],figures[i]->getRightBound(d));
+        for(int j = 0; j < 3;++j) {
+            leftBound.d[j] = fmin(leftBound.d[j],figures[i]->getLeftBound(j));
+            rightBound.d[j] = fmax(rightBound.d[j],figures[i]->getRightBound(j));
         }
     }
-    
-    Point leftBound(l), rightBound(r);
     
     kdtree = new Kdtree(figures,leftBound,rightBound);
 }

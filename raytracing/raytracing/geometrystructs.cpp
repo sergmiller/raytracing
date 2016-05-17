@@ -184,10 +184,7 @@ Point vect(Point a, Point b) {
 }
 
 ld getSurface(Point l, Point r) {
-    ld len[3];
-    for(int i = 0;i < 3;++i) {
-        len[i] = r[i] - l[i];
-    }
+    Point len = r - l;
     return 2*(len[0]*len[1] + len[0]*len[2] + len[1]*len[2]);
 }
 
