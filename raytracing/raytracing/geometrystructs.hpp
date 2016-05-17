@@ -24,7 +24,7 @@ using std::cout;
 using std::endl;
 using std::make_pair;
 
-#define EPS (ld)1e-6
+#define EPS (ld)1e-9
 
 enum Status {
     NOT_INTERSECT,
@@ -107,7 +107,9 @@ struct Color {
         B = color.B;
     }
     const Color operator *(const ld& m) const{
-        return Color(int(fmax(1,fmin(255.0,m * R))), int(fmax(1,fmin(255,m * G))), int(fmax(1,fmin(255,m * B))));
+        return Color(int(fmax(1,fmin(255,m * R))),
+                     int(fmax(1,fmin(255,m * G))),
+                     int(fmax(1,fmin(255,m * B))));
     }
 };
 

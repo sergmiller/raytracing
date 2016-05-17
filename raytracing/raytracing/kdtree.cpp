@@ -34,17 +34,14 @@ Kdtree::~Kdtree() {
 }
 
 Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _rightBound , int dim_out, int depth, int notDiv): data(_data), leftBound(_leftBound), rightBound(_rightBound) {
-    Point littleOffset = Point(EPS*EPS,EPS*EPS,EPS*EPS);
-    leftBound = leftBound - littleOffset;
-    rightBound = rightBound + littleOffset;
-//    std::cout << depth << std::endl;
+
     dim = (dim_out + 1)%3;
     
     size_t size = data.size();
     
     cutIndex = -1;
     
-    if(depth > MAX_DEPTH || size <= 1) {
+    if(depth++ > MAX_DEPTH || size <= 1) {
         leftTree = nullptr;
         rightTree = nullptr;
         return;
@@ -52,9 +49,6 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     
     cmpWithDim cmp(dim);
     sort(data.begin(),data.end(),cmp);
-    
-    median = data[size/2]->getRightBound(dim);
-    
    
     
 //    ld defaultSAH = EMPTY_COST + getSurface(leftBound,rightBound) * size;
@@ -84,6 +78,8 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     vector <shared_ptr<Figure> > dataLeft;
     vector <shared_ptr<Figure> > dataRight;
     
+    median = data[size/2]->getRightBound(dim);
+    
     for(int i = 0; i < size;++i) {
         if(data[i]->getLeftBound(dim) <= median) {
             dataLeft.push_back(data[i]);
@@ -94,13 +90,10 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
         }
     }
     
-    ld dir[3] = {0,0,0};
     Point offset;
-    dir[dim] = median - leftBound[dim];
-    offset = Point(dir);
+    offset.d[dim] = median - leftBound[dim];
     Point boundForRight = leftBound + offset;
-    dir[dim] = rightBound[dim] - median;
-    offset = Point(dir);
+    offset.d[dim] = rightBound[dim] - median;
     Point boundForLeft = rightBound - offset;
     
     if(dataLeft.size() == data.size() || dataRight.size() == data.size()) {
@@ -115,31 +108,30 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     }
     
     cutIndex = size/2;
-    leftTree = new Kdtree(dataLeft,leftBound,boundForLeft,dim,depth+1,notDiv);
-    rightTree = new Kdtree(dataRight,boundForRight,rightBound,dim,depth+1,notDiv);
+    
+    leftTree = new Kdtree(dataLeft,leftBound,boundForLeft,dim,depth,notDiv);
+    rightTree = new Kdtree(dataRight,boundForRight,rightBound,dim,depth,notDiv);
 }
 
 pair<ld,ld> Kdtree::getIntersectionRatioWithBoundingBox(Point& ray, Point& start) {
     Point diag = rightBound - leftBound;
     Point base[3];
+    Point orig[3];
     for(int i = 0;i < 3;++i) {
-         base[i].d[i] = diag[i];
+        orig[i].d[i] = diag[i];
+        base[i].d[i] = 1;
     }
-    
-    assert(!(base[dim] == Point(0,0,0)));
-    
+
     ld intersections[3][2];
     pair <ld,ld> intersectRatio = std::make_pair(-1,-1);
     
     for(int i = 0;i < 3; ++i) {
         for(int j = 0;j < 2; ++j) {
             Point intersectPoint;
-            Point v0 = leftBound + base[i] * j;
-            Point v_01 = base[(i+1)%3];
-            Point v_02 = base[(i+2)%3];
+            Point v0 = leftBound + orig[i] * j;
             
-            intersections[i][j] = getIntersectionFlatRatio(ray,start,base[i],v0,v_01,v_02);
-          
+            intersections[i][j] = getIntersectionFlatRatio(ray,start,base[i],v0, base[(dim+1)%3], base[(dim+2)%3]);
+            
             if(intersections[i][j] < 0) {
                 continue;
             }
@@ -147,7 +139,6 @@ pair<ld,ld> Kdtree::getIntersectionRatioWithBoundingBox(Point& ray, Point& start
             intersectPoint = start + ray * intersections[i][j];
             
             if(!pointInside(intersectPoint)) {
-                intersections[i][j] = -1;
                 continue;
             }
             
@@ -167,17 +158,16 @@ pair<ld,ld> Kdtree::getIntersectionRatioWithBoundingBox(Point& ray, Point& start
 ld Kdtree::getIntersectionRatioWithMedianFlat(Point& ray, Point& start) {
     Point diag = rightBound - leftBound;
     Point base[3];
+    Point orig[3];
     for(int i = 0;i < 3;++i) {
-        base[i].d[i] = diag[i];
+        orig[i].d[i] = diag[i];
+        base[i].d[i] = 1;
     }
     
-    Point v0 = leftBound + base[dim] * ((median - leftBound[dim])/(diag[dim]));
+    Point v0 = leftBound + orig[dim] * ((median - leftBound[dim])/(diag[dim]));
     Point intersectPoint;
-
-    Point v_01 = base[(dim+1)%3];
-    Point v_02 = base[(dim+2)%3];
     
-    ld ratio = getIntersectionFlatRatio(ray, start, base[dim], v0, v_01, v_02);
+    ld ratio = getIntersectionFlatRatio(ray, start, base[dim], v0, base[(dim+1)%3], base[(dim+2)%3]);
     
     if(ratio < 0) {
         return -1;
@@ -207,16 +197,15 @@ IntersectionData Kdtree::find(Point& ray, Point& start) {
     status(bestIntersection) = NOT_INTERSECT;
     
     pair<ld,ld> intersectRatioWithBoundingBox = getIntersectionRatioWithBoundingBox(ray, start);
-    
+
     find(ray,start,bestDist2,bestIntersection, intersectRatioWithBoundingBox);
     return bestIntersection;
 }
 
 void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bestIntersection, pair <ld,ld> intersectionRatio) {
-//    std::cout << data.size() << std::endl;
 
     if(intersectionRatio.first < 0) {
-        assert(intersectionRatio.second < 0);
+//        assert(intersectionRatio.second < 0);
         return;
     }
     
@@ -225,21 +214,10 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
     if((intersectionRatio.second >= 0 && dist2ToInter > bestDist2) || data.empty()) {
         return;
     }
-    
+//
     if(cutIndex != -1) {
-        pair <Status, Point> intersectData = data[cutIndex]->checkIntersect(ray, start);
-        if(intersectData.first != NOT_INTERSECT) {
-            Point vecToCurrentIntersection = intersectData.second - start;
-            
-            ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
-            
-            if(dist2ToCurrentIntersection < bestDist2) {
-                bestDist2 = dist2ToCurrentIntersection;
-                status(bestIntersection) = intersectData.first;
-                point(bestIntersection) = intersectData.second;
-                figure(bestIntersection) = data[cutIndex];
-            }
-        }
+//        assert(leftTree != nullptr);
+        updateWithFigure(data[cutIndex], ray, start, bestDist2, bestIntersection);
     
         ld medianIntersectRatio = getIntersectionRatioWithMedianFlat(ray, start);
         
@@ -252,7 +230,7 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
         
         if(intersectionRatio.first >= 0) {
             if(leftTree->pointInside(pNear)) {
-             ratioLeftBox.first = intersectionRatio.first;
+                ratioLeftBox.first = intersectionRatio.first;
             }
             
             if(rightTree->pointInside(pNear)) {
@@ -273,7 +251,7 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
         packingRatio(ratioLeftBox);
         packingRatio(ratioRightBox);
         
-        if(medianIntersectRatio >= 0) {
+        if(medianIntersectRatio >= 0 && (intersectionRatio.first < 0 || !(pSplit == pNear)) && (intersectionRatio.second < 0 || !(pSplit == pFar))) {
             if(leftTree->pointInside(pSplit)) {
                 ratioLeftBox.second = medianIntersectRatio;
             }
@@ -294,26 +272,25 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
             leftTree->find(ray, start, bestDist2, bestIntersection,ratioLeftBox);
         }
     } else {
-        for(std::shared_ptr<Figure> figure : data) {
-            pair <Status, Point> intersectData = figure->checkIntersect(ray, start);
-            if(intersectData.first == NOT_INTERSECT) {
-                continue;
-            }
-            
-            Point vecToCurrentIntersection = intersectData.second - start;
-            
-            ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
-            
-            if(dist2ToCurrentIntersection < bestDist2) {
-                bestDist2 = dist2ToCurrentIntersection;
-                status(bestIntersection) = intersectData.first;
-                point(bestIntersection) = intersectData.second;
-                figure(bestIntersection) = figure;
-            }
+        for(shared_ptr<Figure> figure : data) {
+            updateWithFigure(figure, ray, start, bestDist2, bestIntersection);
         }
-//        cout << "OK " << data.size()<< endl;
-//        start.printPoint();
-//        (point(bestIntersection)).printPoint()
+    }
+}
+
+void Kdtree::updateWithFigure(shared_ptr<Figure> figure, Point& ray, Point& start, ld& bestDist2, IntersectionData& bestIntersection) {
+    pair <Status, Point> intersectData = figure->checkIntersect(ray, start);
+    if(intersectData.first != NOT_INTERSECT) {
+        Point vecToCurrentIntersection = intersectData.second - start;
+        
+        ld dist2ToCurrentIntersection = vecToCurrentIntersection.dist2();
+        
+        if(dist2ToCurrentIntersection < bestDist2) {
+            bestDist2 = dist2ToCurrentIntersection;
+            status(bestIntersection) = intersectData.first;
+            point(bestIntersection) = intersectData.second;
+            figure(bestIntersection) = figure;
+        }
     }
 }
 

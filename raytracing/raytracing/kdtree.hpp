@@ -31,6 +31,8 @@ private:
     Point rightBound;
     ld median;
     size_t cutIndex;
+    
+    void updateWithFigure(std::shared_ptr<Figure> figure, Point& ray, Point& start, ld& bestDist2, IntersectionData& bestIntersection);
     std::pair<ld,ld> getIntersectionRatioWithBoundingBox(Point& ray, Point& start);
     std::vector <std::shared_ptr<Figure>> data;
     ld getIntersectionRatioWithMedianFlat(Point& ray, Point& start);

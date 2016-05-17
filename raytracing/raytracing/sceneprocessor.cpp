@@ -18,24 +18,19 @@ void SceneProcessor::scanDataFromASCISTL() {
         throw new std::bad_function_call;
     }
     cin >> s >> s;
-    Color color(192,192,192);
-//    cout << color.R << " " << color.G << " " << color.B << endl;
+    int color[3] = {192,192,192};
     while(s != "endsolid") {
         cin >> s;
         Point norm;
         cin >> norm.x >> norm.y >> norm.z;
-//        cout << "*********" << endl;
-//        cout << norm.x << " " << norm.y << " " << norm.z << endl;
         cin >> s >> s;
         Point v[3];
         for(int i = 0;i < 3;++i) {
             cin >> s;
             cin >> v[i].x >> v[i].y >> v[i].z;
-//            cout << v[i].x << " " << v[i].y << " " << v[i].z << endl;
         }
-//        cout << "********" << endl;
         
-        figures.push_back(std::shared_ptr<Figure>(new Triangle(color,v,norm)));
+        figures.push_back(std::shared_ptr<Figure>(new Triangle(Color(color),v,norm)));
         cin >> s >> s >> s;
     }
     
@@ -53,7 +48,7 @@ void SceneProcessor::scanDataFromMy() {
         cin >> type;
         for(int i = 0;i < 3;++i) {
             cin >> color[i];
-            color[i]  = std::max(1,color[i]);
+            color[i]  = std::min(255,std::max(1,color[i]));
         }
         if(!type) {
             Point v[3];
@@ -72,9 +67,8 @@ void SceneProcessor::scanDataFromMy() {
     fclose(input);
 }
 
-
 void SceneProcessor::convertDataToFormatPPM() {
-//    FILE* out = freopen(outputFileName.data(), "w", stdout);
+    FILE* out = freopen(outputFileName.data(), "w", stdout);
     cout << "P3\n";
     cout << pixelSize.second << " " <<  pixelSize.first << "\n";
     cout << MAX_COLOR << "\n";
@@ -84,6 +78,7 @@ void SceneProcessor::convertDataToFormatPPM() {
             cout << "\n";
         }
     }
+    fclose(out);
 }
 
 
@@ -103,7 +98,7 @@ Color SceneProcessor::calcPixelColor(int _x, int _y) {
     if(status(intersectionData) != NOT_INTERSECT) {
         color = figure(intersectionData)->getColor();
         for(int i = 0;i < lights.size(); ++i) {
-            brightness += lights[i]->findLitPoint(intersectionData, figures);
+            brightness += lights[i]->findLitPoint(intersectionData);
         }
 //        cout << brightness << endl;
     }
@@ -155,9 +150,8 @@ void SceneProcessor::calculatePicture() {
     
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
-    for(int i =0;i < pixelSize.first;++i) {
+    for(int i = 0;i < pixelSize.first;++i) {
         for(int j = 0;j < pixelSize.second;++j) {
-//            cout << i << " " << j << endl;
             picture[i][j] = calcPixelColor(i,j);
         }
     }

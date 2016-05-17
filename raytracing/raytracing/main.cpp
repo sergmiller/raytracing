@@ -19,16 +19,15 @@
 #define OUTPUT "output.ppm"
 
 int main(int argc, const char * argv[]) {
-    FILE* out = freopen(OUTPUT, "w", stdout);
     std::ios_base::sync_with_stdio(false);
-    SceneProcessor sceneProcessor(GNOME,CAMERA,OUTPUT,BACKGROUND_INTENSITY);
+    SceneProcessor sceneProcessor(INPUT,CAMERA,OUTPUT,BACKGROUND_INTENSITY);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor.calculatePicture();
     end = std::chrono::system_clock::now();
     int64_t elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-    fclose(out);
-    freopen("out.txt", "w", stdout);
+    FILE* outtime = freopen("outTime.txt", "w", stdout);
     std::cout << "elapsed seconds: " << elapsed_milliseconds/1000 << std::endl;
+    fclose(outtime);
     return 0;
 }

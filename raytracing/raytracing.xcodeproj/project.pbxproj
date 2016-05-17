@@ -31,7 +31,7 @@
 		B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sceneprocessor.hpp; sourceTree = "<group>"; };
 		B94E60B81CD94C1A00CC2A37 /* kdtree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kdtree.cpp; sourceTree = "<group>"; };
 		B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kdtree.hpp; sourceTree = "<group>"; };
-		B94E60BC1CDA8B4C00CC2A37 /* out.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = out.txt; sourceTree = "<group>"; };
+		B94E60BC1CDA8B4C00CC2A37 /* outTime.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = outTime.txt; sourceTree = "<group>"; };
 		B95D242A1CBAE7D000BA20FE /* raytracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = raytracing; sourceTree = BUILT_PRODUCTS_DIR; };
 		B95D242D1CBAE7D000BA20FE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometrystructs.cpp; sourceTree = "<group>"; };
@@ -84,7 +84,7 @@
 				B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */,
 				B94E60B81CD94C1A00CC2A37 /* kdtree.cpp */,
 				B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */,
-				B94E60BC1CDA8B4C00CC2A37 /* out.txt */,
+				B94E60BC1CDA8B4C00CC2A37 /* outTime.txt */,
 				B9632A871CE4C19B00B915CB /* cameraData.txt */,
 			);
 			path = raytracing;

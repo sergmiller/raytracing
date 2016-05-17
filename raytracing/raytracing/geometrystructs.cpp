@@ -7,6 +7,7 @@
 //
 
 #include "geometrystructs.hpp"
+#include <cassert>
 
 Triangle::Triangle(Color _color, Point _v[3], Point normal): normalToFrontSide(normal) {
     color = _color;
@@ -198,7 +199,7 @@ ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point 
     ld offset = -scal(norm, v0);
     
     //case if ray in flat
-    if(std::fabs(scal(norm,ray)) < EPS) {
+    if(std::fabs(scal(norm,ray)) < EPS*EPS) {
         return ratio;
     }
     
