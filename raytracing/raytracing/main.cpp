@@ -14,13 +14,14 @@
 #include "sceneprocessor.hpp"
 
 #define INPUT "input.txt"
+#define GNOME "gnomeASCI.stl"
+#define CAMERA "cameraData.txt"
 #define OUTPUT "output.ppm"
 
 int main(int argc, const char * argv[]) {
-    std::ios_base::sync_with_stdio(false);
-    freopen(INPUT, "r", stdin);
     FILE* out = freopen(OUTPUT, "w", stdout);
-    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY);
+    std::ios_base::sync_with_stdio(false);
+    SceneProcessor sceneProcessor(INPUT,CAMERA,OUTPUT,BACKGROUND_INTENSITY);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor.calculatePicture();

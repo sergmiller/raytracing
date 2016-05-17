@@ -24,7 +24,7 @@ using std::cout;
 using std::endl;
 using std::make_pair;
 
-#define EPS (ld)1e-9
+#define EPS (ld)1e-6
 
 enum Status {
     NOT_INTERSECT,
@@ -38,20 +38,24 @@ class Figure;
 class Point;
 class Sphere;
 
+
+#define x d[0]
+#define y d[1]
+#define z d[2]
 struct Point {
-    ld x,y,z;
+    ld d[3];
     Point(){
-        x = y = z = 0;
+        d[0] = d[1] = d[2] = 0;
     }
     Point(ld _x, ld _y, ld _z) {
-        x = _x;
-        y = _y;
-        z = _z;
+        d[0] = _x;
+        d[1] = _y;
+        d[2] = _z;
     }
-    Point(ld d[3]) {
-        x = d[0];
-        y = d[1];
-        z = d[2];
+    Point(ld _d[3]) {
+        d[0] = _d[0];
+        d[1] = _d[1];
+        d[2] = _d[2];
     }
     const Point operator +(const Point& p) const{
         return Point(x + p.x, y + p.y, z + p.z);
@@ -66,16 +70,7 @@ struct Point {
     }
     
     const ld operator[](const int i) const {
-        switch(i) {
-            case 0:
-                return x;
-            case 1:
-                return y;
-            case 2:
-                return z;
-            default:
-                return 0;
-        }
+        return d[i];
     }
     
     ld dist2() {
@@ -122,7 +117,7 @@ public:
     virtual Point getFrontSideNormalInPoint(Point p) = 0;
     Color getColor() { return color; }
     ld getRightBound(int dim) { return rightBound[dim];}
-    ld getLeftBound(int dim) { return rightBound[dim];}
+    ld getLeftBound(int dim) { return leftBound[dim];}
     Point getRightBound() { return rightBound;}
     Point getLeftBound() { return rightBound;}
 protected:
@@ -133,7 +128,7 @@ protected:
 
 class Triangle: public Figure{
 public:
-    Triangle(int color[3], Point _v[3], Point norm = Point(0,0,0));
+    Triangle(Color color, Point _v[3], Point norm = Point(0,0,0));
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
     Point normalToFrontSide;
@@ -143,7 +138,7 @@ private:
 
 class Sphere: public Figure{
 public:
-    Sphere(int color[3],Point _centr, ld _radius);
+    Sphere(Color color,Point _centr, ld _radius);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
 private:
@@ -153,17 +148,21 @@ private:
 
 ld det(ld a, ld b, ld c, ld d);
 ld det(ld a0[3], ld a1[3], ld a2[3]);
-ld scal(Point& p1, Point& p2);
-Point vect(Point& a, Point& b);
+ld scal(Point p1, Point p2);
+Point vect(Point a, Point b);
+bool sgnP(std::pair<ld,ld> p, ld line[3]);
+std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]);
 
+
+ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point v_01, Point v_02);
 void packingRatio(pair<ld,ld>& r);
-
 ld getSurface(Point l, Point r);
 
-typedef std::tuple<Status,Point,std::shared_ptr<Figure>> IntersectionData;
 
+typedef std::tuple<Status,Point,std::shared_ptr<Figure>> IntersectionData;
 #define status(inter) std::get<0>(inter)
 #define point(inter) std::get<1>(inter)
 #define figure(inter) std::get<2>(inter)
+
 
 #endif /* geometrystructs_hpp */

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <cassert>
+#include <string>
 #include "geometrystructs.hpp"
 #include "lighting.hpp"
 #include "kdtree.hpp"
@@ -19,10 +20,14 @@
 using namespace std;
 
 #define MAX_COLOR 255
-#define BACKGROUND_INTENSITY 0.1
+#define BACKGROUND_INTENSITY 0.2
 
 class SceneProcessor {
 private:
+    bool initSceneData;
+    std::string inputFileName;
+    std::string outputFileName;
+    std::string cameraData;
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
@@ -32,11 +37,16 @@ private:
     vector <LightSource*> lights;
     ld backgroundIntensity;
 
-    void scanData();
-    Color calcPixelColor(int x, int y);
+    void scanCameraMetaData();
+    
+    void scanDataFromMy();
+    void scanDataFromASCISTL();
+    Color calcPixelColor(int _x, int _y);
     void convertDataToFormatPPM();
+    
+    void initKDtree();
 public:
-    SceneProcessor(ld intensity = 0);
+    SceneProcessor(std::string _fileName, std::string _cameraMetaData, std::string _out, ld intensity = 0);
     void calculatePicture();
 };
 

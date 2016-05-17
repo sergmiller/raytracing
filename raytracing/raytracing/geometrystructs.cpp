@@ -8,52 +8,8 @@
 
 #include "geometrystructs.hpp"
 
-ld det(ld a, ld b, ld c, ld d) {
-    return a * d - b * c;
-}
-
-ld det(ld a0[3], ld a1[3], ld a2[3]) {
-    return a0[0] * det(a1[1], a1[2], a2[1], a2[2]) - a0[1] * det(a1[0], a1[2], a2[0], a2[2]) + a0[2] * det(a1[0], a1[1], a2[0], a2[1]);
-}
-
-ld scal(Point& p1, Point& p2) {
-    return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
-}
-
-void packingRatio(pair<ld,ld>& r) {
-    if(r.first < 0 && r.second < 0) {
-        r.first = r.second = -1;
-        return;
-    }
-    
-    if(r.second < 0) {
-        r.second = -1;
-        return;
-    }
-    
-    if(r.first > r.second) {
-        std::swap(r.first, r.second);
-    }
-}
-
-Point vect(Point& a, Point& b) {
-    Point p;
-    p.x = det(a.y, a.z, b.y, b.z);
-    p.y = det(a.z, a.x, b.z, b.x);
-    p.z = det(a.x, a.y, b.x, b.y);
-    return p;
-}
-
-ld getSurface(Point l, Point r) {
-    ld len[3];
-    for(int i = 0;i < 3;++i) {
-        len[i] = r[i] - l[i];
-    }
-    return 2*(len[0]*len[1] + len[0]*len[2] + len[1]*len[2]);
-}
-
-Triangle::Triangle(int _color[3], Point _v[3], Point normal): normalToFrontSide(normal) {
-    color = Color(_color);
+Triangle::Triangle(Color _color, Point _v[3], Point normal): normalToFrontSide(normal) {
+    color = _color;
     for(int i = 0;i < 3;++i) {
         v[i] = _v[i];
     }
@@ -75,31 +31,15 @@ Triangle::Triangle(int _color[3], Point _v[3], Point normal): normalToFrontSide(
     leftBound = Point(minn[0],minn[1],minn[2]);
 }
 
-Sphere::Sphere(int _color[3],Point _centr, ld _radius): centr(_centr), radius(_radius) {
-    color = Color(_color);
-    
+Sphere::Sphere(Color _color,Point _centr, ld _radius): centr(_centr), radius(_radius) {
+    color = _color;
     Point rad(radius,radius,radius);
     
     rightBound = centr + rad;
     leftBound = centr - rad;
 }
 
-std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]) {
-    ld d = det(m[0], m[1], m[2]);
-    ld d0 = det(v, m[1], m[2]);
-    ld d1 = det(m[0], v, m[2]);
-    ld d2 = det(m[0], m[1], v);
-    return std::make_tuple(d0/d, d1/d, d2/d);
-}
 
-int sgn(std::pair<ld,ld> p, ld line[3]) {
-    ld res = line[0] * p.first + line[1] * p.second  + line[2];
-    if(std::fabs(res) < EPS) {
-        return 0;
-    } else {
-        return pow(-1, (res < 0));
-    }
-}
 
 pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point intersect;
@@ -107,26 +47,14 @@ pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point v_01 = v[1] - v[0];
     Point v_02 = v[2] - v[0];
 
-    //case if triangle with measure 0
-    if(vect(v_01, v_02) == Point(0,0,0)) {
+
+    ld ratio = getIntersectionFlatRatio(ray, start, normalToFrontSide, v[0], v_01, v_02);
+    
+    if(ratio < 0) {
         return make_pair(NOT_INTERSECT,intersect);
     }
     
-    ld offset = -scal(normalToFrontSide, v[0]);
-    
-    //case if ray in triangle's flat
-    if(std::fabs(scal(normalToFrontSide,ray)) < EPS) {
-        return make_pair(NOT_INTERSECT,intersect);
-    }
-    
-    ld t = -(scal(normalToFrontSide, start) + offset)/(scal(normalToFrontSide,ray));
-    
-    //case if triangle in other side of ray
-    if(t < 0) {
-        return make_pair(NOT_INTERSECT,intersect);
-    }
-    
-    intersect = start + ray * t;
+    intersect = start + ray * ratio;
     
     //check that intersection inside triangle:
     
@@ -154,9 +82,9 @@ pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     
     ld line1[3] = {1,0,0};
     ld line2[3] = {0,1,0};
-    ld line3[3] = {1,1,-1};
+    ld line3[3] = {-1,-1,1};
     
-    if(sgn(coord,line1) >= 0 && sgn(coord, line2) >= 0 && sgn(coord, line3) <= 0) {
+    if(sgnP(coord,line1) && sgnP(coord, line2) && sgnP(coord,line3)) {
         Status intersectionStatus = (scal(normalToFrontSide, ray) > 0 ? FRONT_SIDE_INTERSECT : BACK_SIDE_INTERSECT);
         return make_pair(intersectionStatus, intersect);
     } else {
@@ -208,7 +136,79 @@ Point Sphere::getFrontSideNormalInPoint(Point p) {
     return p - centr;
 }
 
+std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]) {
+    ld d = det(m[0], m[1], m[2]);
+    ld d0 = det(v, m[1], m[2]);
+    ld d1 = det(m[0], v, m[2]);
+    ld d2 = det(m[0], m[1], v);
+    return std::make_tuple(d0/d, d1/d, d2/d);
+}
 
+bool sgnP(std::pair<ld,ld> p, ld line[3]) {
+    ld res = line[0] * p.first + line[1] * p.second  + line[2];
+    if(res > -EPS*EPS) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+ld det(ld a, ld b, ld c, ld d) {
+    return a * d - b * c;
+}
+
+ld det(ld a0[3], ld a1[3], ld a2[3]) {
+    return a0[0] * det(a1[1], a1[2], a2[1], a2[2]) - a0[1] * det(a1[0], a1[2], a2[0], a2[2]) + a0[2] * det(a1[0], a1[1], a2[0], a2[1]);
+}
+
+ld scal(Point p1, Point p2) {
+    return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
+}
+
+void packingRatio(pair<ld,ld>& r) {
+    if(r.first < 0 && r.second < 0) {
+        return;
+    }
+    
+    if((r.first > r.second && r.second >= 0) || r.first < 0) {
+        std::swap(r.first, r.second);
+    }
+}
+
+Point vect(Point a, Point b) {
+    Point p;
+    p.x = det(a.y, a.z, b.y, b.z);
+    p.y = det(a.z, a.x, b.z, b.x);
+    p.z = det(a.x, a.y, b.x, b.y);
+    return p;
+}
+
+ld getSurface(Point l, Point r) {
+    ld len[3];
+    for(int i = 0;i < 3;++i) {
+        len[i] = r[i] - l[i];
+    }
+    return 2*(len[0]*len[1] + len[0]*len[2] + len[1]*len[2]);
+}
+
+ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point v_01, Point v_02) {
+    ld ratio = -1;
+    //case if flat has measure 0
+    if(vect(v_01, v_02) == Point(0,0,0)) {
+        return ratio;
+    }
+    
+    ld offset = -scal(norm, v0);
+    
+    //case if ray in flat
+    if(std::fabs(scal(norm,ray)) < EPS) {
+        return ratio;
+    }
+    
+    ratio = -(scal(norm, start) + offset)/(scal(norm,ray));
+    
+    return ratio;
+}
 
 
 
