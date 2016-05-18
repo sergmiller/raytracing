@@ -14,6 +14,7 @@ Triangle::Triangle(Color _color, Point _v[3], Point normal): normalToFrontSide(n
     for(int i = 0;i < 3;++i) {
         v[i] = _v[i];
     }
+    
     if(normalToFrontSide == Point(0,0,0)) {
         Point vec1 = v[1] - v[0];
         Point vec2 = v[2] - v[0];

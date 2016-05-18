@@ -209,6 +209,7 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
         return;
     }
     
+//    intersectionRatio = getIntersectionRatioWithBoundingBox(ray, start);
     ld dist2ToInter = intersectionRatio.first*intersectionRatio.first*ray.dist2();
     
     if((intersectionRatio.second >= 0 && dist2ToInter > bestDist2) || data.empty()) {
@@ -251,7 +252,7 @@ void Kdtree::find(Point& ray, Point& start, ld& bestDist2, IntersectionData& bes
         packingRatio(ratioLeftBox);
         packingRatio(ratioRightBox);
         
-        if(medianIntersectRatio >= 0 && (intersectionRatio.first < 0 || !(pSplit == pNear)) && (intersectionRatio.second < 0 || !(pSplit == pFar))) {
+        if(medianIntersectRatio >= 0 && !(pSplit == pNear) && !(pSplit == pFar)) {
             if(leftTree->pointInside(pSplit)) {
                 ratioLeftBox.second = medianIntersectRatio;
             }

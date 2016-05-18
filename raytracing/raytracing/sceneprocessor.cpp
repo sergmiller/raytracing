@@ -30,7 +30,7 @@ void SceneProcessor::scanDataFromASCISTL() {
             cin >> v[i].x >> v[i].y >> v[i].z;
         }
         
-        figures.push_back(std::shared_ptr<Figure>(new Triangle(Color(color),v,norm)));
+        figures.push_back(std::shared_ptr<Figure>(new Triangle(Color(color),v)));
         cin >> s >> s >> s;
     }
     

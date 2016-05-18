@@ -13,7 +13,7 @@
 #include <vector>
 #include "geometrystructs.hpp"
 
-#define EMPTY_COST 0
+#define EMPTY_COST 0.1
 #define MAX_DEPTH 15
 
 class Kdtree {
