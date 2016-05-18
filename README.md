@@ -12,7 +12,8 @@ all figures inside big green sphere:
 (5 light sources)
 ![alt tag](http://savepic.ru/9391865.png)
 
-gnome(used kdtree):
+
+gnome(764 polygons):
 
 
 ![alt tag](http://savepic.ru/9819413.png)
