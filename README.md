@@ -18,3 +18,7 @@ gnome(764 polygons):
 
 ![alt tag](http://savepic.ru/9819413.png)
 ![alt tag](http://savepic.ru/9810197.png)
+
+reflection:
+
+![alt tag](http://savepic.ru/9836460.png)
