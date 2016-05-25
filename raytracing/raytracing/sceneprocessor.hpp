@@ -20,7 +20,7 @@
 using namespace std;
 
 #define MAX_COLOR 255
-#define BACKGROUND_INTENSITY 0.2
+#define BACKGROUND_INTENSITY 0.4
 
 class SceneProcessor {
 private:
@@ -41,7 +41,9 @@ private:
     
     void scanDataFromMy();
     void scanDataFromASCISTL();
-    Color calcPixelColor(int _x, int _y);
+    
+    Color calcColorInPoint(Point ray, Point start, int contribution);
+    Color calcPixel(int _x, int _y);
     void convertDataToFormatPPM();
     
     void initKDtree();

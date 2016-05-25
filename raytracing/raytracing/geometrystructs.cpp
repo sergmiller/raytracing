@@ -9,8 +9,10 @@
 #include "geometrystructs.hpp"
 #include <cassert>
 
-Triangle::Triangle(Color _color, Point _v[3], Point normal): normalToFrontSide(normal) {
+Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectRatio): normalToFrontSide(normal) {
+    reflectRatio = _reflectRatio;
     color = _color;
+    
     for(int i = 0;i < 3;++i) {
         v[i] = _v[i];
     }
@@ -33,8 +35,10 @@ Triangle::Triangle(Color _color, Point _v[3], Point normal): normalToFrontSide(n
     leftBound = Point(minn[0],minn[1],minn[2]);
 }
 
-Sphere::Sphere(Color _color,Point _centr, ld _radius): centr(_centr), radius(_radius) {
+Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectRatio): centr(_centr), radius(_radius) {
+    reflectRatio = _reflectRatio;
     color = _color;
+    
     Point rad(radius,radius,radius);
     
     rightBound = centr + rad;
@@ -209,7 +213,16 @@ ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point 
     return ratio;
 }
 
-
+Point getReflectionRay(Point ray, Point normal) {
+    if(scal(ray,normal) < 0) {
+        normal = normal*(-1);
+    }
+    
+    ld projLenQuad = powl(scal(ray,normal),2)/normal.dist2();
+    normal = normal * sqrtl(projLenQuad/normal.dist2());
+    Point offset = normal - ray;
+    return (ray + offset * 2) * (-1);
+}
 
 
 

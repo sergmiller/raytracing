@@ -101,6 +101,11 @@ struct Color {
         G = c[1];
         B = c[2];
     }
+    
+    const Color operator +(const Color& c) const{
+        return Color(R + c.R, G + c.G, B + c.B) * 1;
+    }
+    
     void operator =(const Color& color) {
         R = color.R;
         G = color.G;
@@ -122,7 +127,9 @@ public:
     ld getLeftBound(int dim) { return leftBound[dim];}
     Point getRightBound() { return rightBound;}
     Point getLeftBound() { return rightBound;}
+    int getAlpha() { return reflectRatio;}
 protected:
+    int reflectRatio;
     Color color;
     Point rightBound;
     Point leftBound;
@@ -130,17 +137,17 @@ protected:
 
 class Triangle: public Figure{
 public:
-    Triangle(Color color, Point _v[3], Point norm = Point(0,0,0));
+    Triangle(Color color, Point _v[3], Point norm = Point(0,0,0), int _reflectRatio = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
-    Point normalToFrontSide;
 private:
+    Point normalToFrontSide;
     Point v[3];
 };
 
 class Sphere: public Figure{
 public:
-    Sphere(Color color,Point _centr, ld _radius);
+    Sphere(Color color,Point _centr, ld _radius, int _reflectRatio = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
 private:
@@ -155,6 +162,7 @@ Point vect(Point a, Point b);
 bool sgnP(std::pair<ld,ld> p, ld line[3]);
 std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]);
 
+Point getReflectionRay(Point ray, Point normal);
 
 ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point v_01, Point v_02);
 void packingRatio(pair<ld,ld>& r);

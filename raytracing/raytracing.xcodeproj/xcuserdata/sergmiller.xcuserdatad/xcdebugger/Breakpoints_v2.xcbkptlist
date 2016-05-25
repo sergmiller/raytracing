@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "raytracing/sceneprocessor.cpp"
-            timestampString = "485216707.777888"
+            timestampString = "485686553.829451"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
-            landmarkName = "SceneProcessor::calculatePicture()"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
