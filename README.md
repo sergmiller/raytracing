@@ -19,6 +19,6 @@ gnome(764 polygons):
 ![alt tag](http://savepic.ru/9819413.png)
 ![alt tag](http://savepic.ru/9810197.png)
 
-reflection:
+reflection(sphere_alpha = 0.3):
 
 ![alt tag](http://savepic.ru/9836460.png)
