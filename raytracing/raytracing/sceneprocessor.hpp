@@ -21,7 +21,6 @@
 using std::string;
 using std::vector;
 
-#define Picture vector <vector<Color> >
 #define MAX_COLOR 255
 #define YDIM 2000
 #define XDIM 1500

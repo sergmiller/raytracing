@@ -25,6 +25,8 @@ using std::endl;
 using std::make_pair;
 
 #define EPS (ld)1e-9
+#define Picture std::vector <std::vector<Color> >
+
 
 enum Status {
     NOT_INTERSECT,
@@ -120,17 +122,20 @@ class Figure{
 public:
     virtual pair <Status,Point> checkIntersect(Point ray, Point start) = 0;
     virtual Point getFrontSideNormalInPoint(Point p) = 0;
-    Color getColor() { return color; }
-    ld getRightBound(int dim) { return rightBound[dim];}
-    ld getLeftBound(int dim) { return leftBound[dim];}
-    Point getRightBound() { return rightBound;}
-    Point getLeftBound() { return rightBound;}
-    int getAlpha() { return reflectAlpha;}
-    void setTexture(int _textureId, int _textureAlpha) { textureID = _textureId; textureAlpha = _textureAlpha; }
+    virtual Color calcTextureColor(Point intersection, Picture& texture) = 0;
+    Color getColor() {return color;}
+    ld getRightBound(int dim) {return rightBound[dim];}
+    ld getLeftBound(int dim) {return leftBound[dim];}
+    Point getRightBound() {return rightBound;}
+    Point getLeftBound() {return rightBound;}
+    int getReflectAlpha() {return reflectAlpha;}
+    int getTextureAlpha() {return textureAlpha;}
+    int getTextureId() {return textureId;}
+    void setTexture(int _textureId, int _textureAlpha) { textureId = _textureId; textureAlpha = _textureAlpha; }
 protected:
     int textureAlpha;
     int reflectAlpha;
-    int textureID;
+    int textureId;
     Color color;
     Point rightBound;
     Point leftBound;
@@ -141,6 +146,7 @@ public:
     Triangle(Color color, Point _v[3], Point norm = Point(0,0,0), int _reflectRatio = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
+    Color calcTextureColor(Point intersection, Picture& texture);
 private:
     Point normalToFrontSide;
     Point v[3];
@@ -151,6 +157,7 @@ public:
     Sphere(Color color,Point _centr, ld _radius, int _reflectRatio = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
+    Color calcTextureColor(Point intersection, Picture& texture) { return Color(0,0,0);}
 private:
     Point centr;
     ld radius;

@@ -9,8 +9,9 @@
 #include "geometrystructs.hpp"
 #include <cassert>
 
+
 Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha): normalToFrontSide(normal) {
-    textureID = -1;
+    textureId = -1;
     textureAlpha = 0;
     reflectAlpha = _reflectAlpha;
     color = _color;
@@ -38,7 +39,7 @@ Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha): 
 }
 
 Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectAlpha): centr(_centr), radius(_radius) {
-    textureID = -1;
+    textureId = -1;
     textureAlpha = 0;
     reflectAlpha = _reflectAlpha;
     color = _color;
@@ -144,6 +145,19 @@ Point Triangle::getFrontSideNormalInPoint(Point p) {
 
 Point Sphere::getFrontSideNormalInPoint(Point p) {
     return p - centr;
+}
+
+Color Triangle::calcTextureColor(Point intersection, Picture& texture) {
+    Color textureColor;
+    Point v01 = v[1] - v[0];
+    Point v02 = v[2] - v[0];
+    Point dir = intersection - v[0];
+    uint64_t xmax = texture.size();
+    uint64_t ymax = texture[0].size();
+    uint64_t coord1 = (uint64_t)(scal(dir, v01)/sqrtl(v01.dist2())) % xmax;
+    Point normalv02 = v02 - v01 * (scal(v01,v02)/v01.dist2());
+    uint64_t coord2 = (uint64_t)(scal(dir, normalv02)/sqrtl(normalv02.dist2())) % ymax;
+    return texture[coord1][coord2];
 }
 
 std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]) {

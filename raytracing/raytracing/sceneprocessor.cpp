@@ -103,15 +103,25 @@ Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution,
     ld brightness = 0;
     
     if(status(intersectionData) != NOT_INTERSECT) {
-        color = figure(intersectionData)->getColor();
+        ld textureAlpha = figure(intersectionData)->getTextureAlpha();
+        
+        Color textureColor;
+        
+        int textureId = figure(intersectionData)->getTextureId();
+        
+        if(textureId != -1) {
+            textureColor =  figure(intersectionData)->calcTextureColor(point(intersectionData), textures[textureId]);
+        }
+        
+        color = figure(intersectionData)->getColor() * (1 - (textureAlpha/100)) + textureColor * (textureAlpha/100);
         for(int i = 0;i < lights.size(); ++i) {
             brightness += lights[i].findLitPoint(intersectionData, kdtree);
         }
-        ld alpha = (ld)figure(intersectionData)->getAlpha();
+        ld reflectAlpha = (ld)figure(intersectionData)->getReflectAlpha();
         Point reflectedRay = getReflectionRay(ray, figure(intersectionData)->getFrontSideNormalInPoint(point(intersectionData)));
-        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (alpha - 1)/100, ++depth);
+        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (reflectAlpha - 1)/100, ++depth);
         
-        color = color * (brightness + backgroundIntensity) * (1 - (alpha/100)) + reflectColor * (alpha/100);
+        color = color * (brightness + backgroundIntensity) * (1 - (reflectAlpha/100)) + reflectColor * (reflectAlpha/100);
     }
     
     return color;
@@ -122,7 +132,7 @@ Color SceneProcessor::calcPixel(int _x, int _y) {
     Point pixel = controlPoint + ((dim.first * (ld)_x) + (dim.second * (ld)_y));
     Point ray = pixel - observerPoint;
     
-    return calcColorInPoint(ray, pixel, 100,1);
+    return calcColorInPoint(ray, pixel, 100, 1);
 }
 
 SceneProcessor& SceneProcessor::scanLightData(string light) {
@@ -230,6 +240,7 @@ SceneProcessor& SceneProcessor::loadTextureFromPPMWithKey(string name, string ke
     cout << len <<" " <<  high << endl;
     int maxcolor;
     cin >> maxcolor;
+    texturesId[key] = (int)textures.size();
     textures.push_back(Picture(high,vector <Color>(len)));
     Picture& currentTexture = textures[textures.size() - 1];
     for(int i = 0; i < high; ++i) {
@@ -242,7 +253,6 @@ SceneProcessor& SceneProcessor::loadTextureFromPPMWithKey(string name, string ke
     
     fclose(in);
     
-    texturesId[key] = (int)textures.size();
     return *this;
 }
 
