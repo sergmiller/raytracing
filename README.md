@@ -1,6 +1,8 @@
 # raytracing
 simple ray tracing, c++ project for MIPT programming course semester 4 
 
+all 1500x2000
+
 (oktaeder and sphere)
 ![alt tag](http://savepic.ru/9384756.png)
 
@@ -12,13 +14,22 @@ all figures inside big green sphere:
 (5 light sources)
 ![alt tag](http://savepic.ru/9391865.png)
 
-
-gnome(764 polygons):
-
+gnome(764 polygons, time ~ 20s):
 
 ![alt tag](http://savepic.ru/9819413.png)
 ![alt tag](http://savepic.ru/9810197.png)
 
-reflection(sphere_alpha = 0.3):
+Jesus(30К polygons, time ~ 35s):
+
+![alt tag](http://savepic.ru/9859713.png)
+
+Weight(160К polygons, time ~ 60s):
+
+![alt tag](http://savepic.ru/9885312.png)
+
+reflection:
 
 ![alt tag](http://savepic.ru/9836460.png)
+![alt tag](http://savepic.ru/9856640.png)
+
+
