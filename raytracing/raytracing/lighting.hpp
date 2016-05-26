@@ -17,11 +17,10 @@
 
 class LightSource {
 public:
-    LightSource(ld _intensity, Point _centr, Kdtree* _kdtree);
-    ld findLitPoint(IntersectionData targetPointData);
+    LightSource(ld _intensity, Point _centr);
+    ld findLitPoint(IntersectionData targetPointData, std::shared_ptr<Kdtree> kdtree);
     ld calcBrightness(Point targetPoint, std::shared_ptr<Figure> figure);
     ld intensity;
-    Kdtree* kdtree;
     Point centr;
 };
 

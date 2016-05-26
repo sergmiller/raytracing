@@ -33,7 +33,10 @@ Kdtree::~Kdtree() {
     }
 }
 
+int vert = 0;
+
 Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _rightBound , int dim_out, int depth, int notDiv): data(_data), leftBound(_leftBound), rightBound(_rightBound) {
+    ++vert;
 
     dim = (dim_out + 1)%3;
     
@@ -78,7 +81,7 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     vector <shared_ptr<Figure> > dataLeft;
     vector <shared_ptr<Figure> > dataRight;
     
-    median = data[size/2]->getRightBound(dim);
+    median = (data[size/2]->getRightBound(dim) + data[size/2]->getRightBound(dim))/2;
     
     for(int i = 0; i < size;++i) {
         if(data[i]->getLeftBound(dim) <= median) {
@@ -111,6 +114,10 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     
     leftTree = new Kdtree(dataLeft,leftBound,boundForLeft,dim,depth,notDiv);
     rightTree = new Kdtree(dataRight,boundForRight,rightBound,dim,depth,notDiv);
+    
+    if(depth == 2) {
+        cout << "kd: " << vert << endl;
+    }
 }
 
 pair<ld,ld> Kdtree::getIntersectionRatioWithBoundingBox(Point& ray, Point& start) {

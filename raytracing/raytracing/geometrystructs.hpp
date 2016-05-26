@@ -86,8 +86,6 @@ struct Point {
         cout << x << " " << y << " " << z << endl;
         cout << "***********" << endl;
     }
-    
-//    std::tuple <Status,Point,std::shared_ptr<Figure>> findFirstIntersect(Kdtree* kdtree,Point ray,Point start);
 };
 
 struct Color {
@@ -159,20 +157,23 @@ ld det(ld a, ld b, ld c, ld d);
 ld det(ld a0[3], ld a1[3], ld a2[3]);
 ld scal(Point p1, Point p2);
 Point vect(Point a, Point b);
+
 bool sgnP(std::pair<ld,ld> p, ld line[3]);
+
 std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]);
 
 Point getReflectionRay(Point ray, Point normal);
 
 ld getIntersectionFlatRatio(Point ray, Point start, Point norm, Point v0, Point v_01, Point v_02);
-void packingRatio(pair<ld,ld>& r);
+
 ld getSurface(Point l, Point r);
 
+void packingRatio(pair<ld,ld>& r);
 
 typedef std::tuple<Status,Point,std::shared_ptr<Figure>> IntersectionData;
+
 #define status(inter) std::get<0>(inter)
 #define point(inter) std::get<1>(inter)
 #define figure(inter) std::get<2>(inter)
-
 
 #endif /* geometrystructs_hpp */

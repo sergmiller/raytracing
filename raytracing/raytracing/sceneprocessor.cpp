@@ -8,10 +8,12 @@
 
 #include "sceneprocessor.hpp"
 
-SceneProcessor::SceneProcessor(std::string _fileName, std::string _camera, std::string _out, ld intensity):backgroundIntensity(intensity), inputFileName(_fileName), cameraData(_camera), outputFileName(_out) {};
+using std::fmax;
 
-void SceneProcessor::scanDataFromASCISTL() {
-    FILE* input = freopen(inputFileName.data(), "r", stdin);
+SceneProcessor::SceneProcessor(ld intensity):backgroundIntensity(intensity), initCameraData(false), leftBoundScene(Point(INFINITY,INFINITY,INFINITY)), rightBoundScene(Point(-INFINITY,-INFINITY,-INFINITY)) {};
+
+SceneProcessor& SceneProcessor::scanDataFromASCISTL(string input) {
+    FILE* in = freopen(input.data(), "r", stdin);
     string s;
     cin >> s;
     if(s != "solid") {
@@ -34,11 +36,12 @@ void SceneProcessor::scanDataFromASCISTL() {
         cin >> s >> s >> s;
     }
     
-    fclose(input);
+    fclose(in);
+    return *this;
 }
 
-void SceneProcessor::scanDataFromMy() {
-    FILE* input = freopen(inputFileName.data(), "r", stdin);
+SceneProcessor& SceneProcessor::scanDataFromMy(string input) {
+    FILE* in = freopen(input.data(), "r", stdin);
     int n;
     cin >> n;
     for (int i = 0;i < n;++i) {
@@ -65,26 +68,28 @@ void SceneProcessor::scanDataFromMy() {
         }
     }
     
-    fclose(input);
+    fclose(in);
+    return *this;
 }
 
-void SceneProcessor::convertDataToFormatPPM() {
-    FILE* out = freopen(outputFileName.data(), "w", stdout);
+SceneProcessor& SceneProcessor::printDataWithFormatPPM(string output) {
+    FILE* out = freopen(output.data(), "w", stdout);
     cout << "P3\n";
     cout << pixelSize.second << " " <<  pixelSize.first << "\n";
     cout << MAX_COLOR << "\n";
     for(int i = 0;i < pixelSize.first;++i) {
-        for(int j = 0; j < pixelSize.second;++j) {
+        for(int j = 0; j < pixelSize.second; ++j) {
             cout << picture[i][j].R << " " << picture[i][j].G << " " << picture[i][j].B;
             cout << "\n";
         }
     }
     fclose(out);
+    return *this;
 }
 
-Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution) {
+Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution, int depth) {
     Color color;
-    if(contribution < 5 || ray == Point(0,0,0)) {
+    if(contribution < 5 || depth > 5 || ray == Point(0,0,0)) {
         return color;
     }
     
@@ -93,25 +98,14 @@ Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution)
     ld brightness = 0;
     
     if(status(intersectionData) != NOT_INTERSECT) {
-        assert(figure(intersectionData) != nullptr);
         color = figure(intersectionData)->getColor();
         for(int i = 0;i < lights.size(); ++i) {
-            brightness += lights[i]->findLitPoint(intersectionData);
+            brightness += lights[i].findLitPoint(intersectionData, kdtree);
         }
         ld alpha = (ld)figure(intersectionData)->getAlpha();
         Point reflectedRay = getReflectionRay(ray, figure(intersectionData)->getFrontSideNormalInPoint(point(intersectionData)));
-        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (alpha - 1)/100);
+        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (alpha - 1)/100, ++depth);
         
-//        Color left = color * (brightness + backgroundIntensity) * (1 - (alpha/100));
-//        Color right = reflectColor * (alpha/100);
-////        cout << left.R << " " << left.G << " " << left.B << endl;
-////        cout << right.R << " " << right.G << " " << right.B << endl;
-//        assert(right.R <= 1);
-//        assert(reflectColor.R <= 1);
-//        if(reflectColor.R > 1) {
-//            cout << reflectColor.R << " " << reflectColor.G << " " << reflectColor.B << endl;
-//            cout << 1 - alpha/100 << endl;
-//        }
         color = color * (brightness + backgroundIntensity) * (1 - (alpha/100)) + reflectColor * (alpha/100);
     }
     
@@ -123,54 +117,52 @@ Color SceneProcessor::calcPixel(int _x, int _y) {
     Point pixel = controlPoint + ((dim.first * (ld)_x) + (dim.second * (ld)_y));
     Point ray = pixel - observerPoint;
     
-    return calcColorInPoint(ray, pixel, 100);
+    return calcColorInPoint(ray, pixel, 100,1);
 }
 
-void SceneProcessor::scanCameraMetaData() {
-    FILE* cameraDataFile = freopen(cameraData.data(), "r", stdin);
+SceneProcessor& SceneProcessor::scanLightData(string light) {
+    FILE* in = freopen(light.data(), "r", stdin);
     int k;
     cin >> k;
     for(int i = 0;i < k;++i) {
         Point c;
         ld intense;
         cin >> c.x >> c.y >> c.z >> intense;
-        lights.push_back(new LightSource(intense,c, kdtree));
+        lights.push_back(LightSource(intense,c));
     }
+    fclose(in);
+    return *this;
+}
+
+SceneProcessor& SceneProcessor::scanCameraData(string camera) {
+    FILE* in = freopen(camera.data(), "r", stdin);
     cin >> controlPoint.x >> controlPoint.y >> controlPoint.z;
     cin >> dim.first.x >> dim.first.y >> dim.first.z >> pixelSize.first;
     cin >> dim.second.x >> dim.second.y >> dim.second.z >> pixelSize.second;
     cin >> observerPoint.x >> observerPoint.y >> observerPoint.z;
-    fclose(cameraDataFile);
+    fclose(in);
+    initCameraData = true;
+    return *this;
 }
 
 void SceneProcessor::initKDtree() {
-    Point leftBound(INFINITY,INFINITY,INFINITY);
-    Point rightBound(-INFINITY,-INFINITY,-INFINITY);
-    
+
     for(int i = 0; i < figures.size(); ++i) {
         for(int j = 0; j < 3;++j) {
-            leftBound.d[j] = fmin(leftBound.d[j],figures[i]->getLeftBound(j));
-            rightBound.d[j] = fmax(rightBound.d[j],figures[i]->getRightBound(j));
+            leftBoundScene.d[j] = fmin(leftBoundScene.d[j],figures[i]->getLeftBound(j));
+            rightBoundScene.d[j] = fmax(rightBoundScene.d[j],figures[i]->getRightBound(j));
         }
     }
     
-    kdtree = new Kdtree(figures,leftBound,rightBound);
+    kdtree = std::shared_ptr<Kdtree>(new Kdtree(figures,leftBoundScene,rightBoundScene));
 }
 
-void SceneProcessor::calculatePicture() {
-    if(inputFileName[inputFileName.size() - 1] == 'l') {
-        scanDataFromASCISTL();
-    } else {
-        scanDataFromMy();
-    }
-    
-//    inputFileName = "input.txt";
-//    scanDataFromMy();
-    
+SceneProcessor& SceneProcessor::run() {
     initKDtree();
-
-    scanCameraMetaData();
-//    cout << figures.size() << endl;
+    if(!initCameraData) {
+        autoCameraPosition();
+    }
+    cout << "size: " << figures.size() << endl;
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
     for(int i = 0;i < pixelSize.first;++i) {
@@ -179,11 +171,44 @@ void SceneProcessor::calculatePicture() {
         }
     }
     
-//    Point norm = Point(0,0,-1);
-//    Point ray = Point(0,0,1);
-//    Point refl = getReflectionRay(ray, norm);
-//    refl.printPoint();
+    return *this;
+}
+
+void SceneProcessor::autoCameraPosition() {
+    Point centr = (leftBoundScene + rightBoundScene)*(0.5);
+    Point right = rightBoundScene - centr;
+    Point left = leftBoundScene - centr;
+    right.printPoint();
+    left.printPoint();
+    ld maxdev = fmax(right.x, fmax(right.y, right.z));
+    maxdev =  fmax(fmax(maxdev,-left.x), fmax(-left.y, -left.z));
+    maxdev *= 20;
+    cout << maxdev << endl;
     
-    convertDataToFormatPPM();
+    Point normalToScreen = Point(-maxdev,maxdev*2,maxdev/5);
+    
+    Point centrScreen = centr + normalToScreen;
+    
+    ld len = maxdev*sqrtl(2.0)/(4 * YDIM);
+    
+    dim.second = Point(3/sqrtl(10.0), 1/sqrtl(10.0), 0) * len;
+    Point vectx = vect(dim.second, normalToScreen);
+    if(vectx.z > 0) {
+        vectx = vectx * (-1);
+    }
+    
+    dim.first = vectx * (1/sqrtl(vectx.dist2())) * len;
+    
+    controlPoint = centrScreen - (dim.first * (XDIM/2)) - (dim.second * (YDIM/2));
+    observerPoint = centr + (normalToScreen * (1/sqrtl(normalToScreen.dist2()))) * 1e8;
+    dim.first.printPoint();
+    dim.second.printPoint();
+    observerPoint.printPoint();
+    controlPoint.printPoint();
+    centrScreen.printPoint();
+    pixelSize = std::make_pair(XDIM,YDIM);
+    cout << maxdev << endl;
+    
+    initCameraData = true;
 }
 

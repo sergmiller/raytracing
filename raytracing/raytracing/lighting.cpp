@@ -9,9 +9,9 @@
 #include "lighting.hpp"
 #include <cassert>
 
-LightSource::LightSource(ld _intensity, Point _centr, Kdtree* _kdtree): intensity(_intensity),  centr(_centr), kdtree(_kdtree) {}
+LightSource::LightSource(ld _intensity, Point _centr): intensity(_intensity),  centr(_centr){}
 
-ld LightSource::findLitPoint(IntersectionData targetPointData) {
+ld LightSource::findLitPoint(IntersectionData targetPointData, std::shared_ptr<Kdtree> kdtree) {
     Point targetPoint = point(targetPointData);
     Point ray = (targetPoint - centr);
     

@@ -17,38 +17,44 @@
 #include "lighting.hpp"
 #include "kdtree.hpp"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 #define MAX_COLOR 255
-#define BACKGROUND_INTENSITY 0.4
+#define YDIM 2000
+#define XDIM 1500
 
 class SceneProcessor {
 private:
-    bool initSceneData;
-    std::string inputFileName;
-    std::string outputFileName;
-    std::string cameraData;
+    bool initCameraData;
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
     vector <std::shared_ptr<Figure> > figures;
-    Kdtree* kdtree;
+    std::shared_ptr<Kdtree> kdtree;
     vector <vector<Color> > picture;
-    vector <LightSource*> lights;
+    vector <LightSource> lights;
     ld backgroundIntensity;
-
-    void scanCameraMetaData();
     
-    void scanDataFromMy();
-    void scanDataFromASCISTL();
+    Point leftBoundScene;
+    Point rightBoundScene;
     
-    Color calcColorInPoint(Point ray, Point start, int contribution);
+    Color calcColorInPoint(Point ray, Point start, int contribution, int depth);
     Color calcPixel(int _x, int _y);
-    void convertDataToFormatPPM();
     
+    void getKeyPoints();
+    void autoCameraPosition();
+    void calcObserverPoint();
     void initKDtree();
 public:
-    SceneProcessor(std::string _fileName, std::string _cameraMetaData, std::string _out, ld intensity = 0);
+    SceneProcessor& scanLightData(string lights);
+    SceneProcessor& scanCameraData(string camera);
+    SceneProcessor& scanDataFromMy(string input);
+    SceneProcessor& scanDataFromASCISTL(string input);
+    SceneProcessor& printDataWithFormatPPM(string output);
+    SceneProcessor& run();
+    
+    SceneProcessor(ld intensity = 0);
     void calculatePicture();
 };
 
