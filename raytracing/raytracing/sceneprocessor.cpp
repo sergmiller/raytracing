@@ -168,6 +168,7 @@ SceneProcessor& SceneProcessor::run() {
         autoCameraPosition();
     }
     cout << "size: " << figures.size() << endl;
+    cout << "pixelsize: " << pixelSize.first << " " << pixelSize.second << endl;
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
     for(int i = 0;i < pixelSize.first;++i) {
@@ -245,18 +246,20 @@ SceneProcessor& SceneProcessor::loadTextureFromPPMWithKey(string name, string ke
     return *this;
 }
 
-SceneProcessor& SceneProcessor::addTextureMap(string map) {
+SceneProcessor& SceneProcessor::addTextureMap(string texturemap) {
+    FILE* in = freopen(texturemap.data(), "r", stdin);
     int k, numb, alpha;
     string textureName;
     cin >> k;
     for(int i = 0;i < k;++i) {
         cin >> numb >> textureName >> alpha;
         --numb;
-        if(alpha > 0 && alpha <= 100 && numb >= 0 && numb < figures.size()) {
+        if(alpha > 0 && alpha <= 100 && numb >= 0 && numb < figures.size() && texturesId[textureName] > 0) {
             figures[numb]->setTexture(texturesId[textureName],alpha);
         }
     }
     
+    fclose(in);
     return *this;
 }
 

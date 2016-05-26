@@ -126,7 +126,7 @@ public:
     Point getRightBound() { return rightBound;}
     Point getLeftBound() { return rightBound;}
     int getAlpha() { return reflectAlpha;}
-    void setTexture(uint64_t _textureId, int _textureAlpha) { textureID = _textureId; textureAlpha = _textureAlpha; }
+    void setTexture(int _textureId, int _textureAlpha) { textureID = _textureId; textureAlpha = _textureAlpha; }
 protected:
     int textureAlpha;
     int reflectAlpha;
