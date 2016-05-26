@@ -125,9 +125,12 @@ public:
     ld getLeftBound(int dim) { return leftBound[dim];}
     Point getRightBound() { return rightBound;}
     Point getLeftBound() { return rightBound;}
-    int getAlpha() { return reflectRatio;}
+    int getAlpha() { return reflectAlpha;}
+    void setTexture(uint64_t _textureId, int _textureAlpha) { textureID = _textureId; textureAlpha = _textureAlpha; }
 protected:
-    int reflectRatio;
+    int textureAlpha;
+    int reflectAlpha;
+    int textureID;
     Color color;
     Point rightBound;
     Point leftBound;

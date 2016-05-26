@@ -9,8 +9,10 @@
 #include "geometrystructs.hpp"
 #include <cassert>
 
-Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectRatio): normalToFrontSide(normal) {
-    reflectRatio = _reflectRatio;
+Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha): normalToFrontSide(normal) {
+    textureID = -1;
+    textureAlpha = 0;
+    reflectAlpha = _reflectAlpha;
     color = _color;
     
     for(int i = 0;i < 3;++i) {
@@ -35,8 +37,10 @@ Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectRatio): 
     leftBound = Point(minn[0],minn[1],minn[2]);
 }
 
-Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectRatio): centr(_centr), radius(_radius) {
-    reflectRatio = _reflectRatio;
+Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectAlpha): centr(_centr), radius(_radius) {
+    textureID = -1;
+    textureAlpha = 0;
+    reflectAlpha = _reflectAlpha;
     color = _color;
     
     Point rad(radius,radius,radius);

@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include <cassert>
 #include <string>
 #include "geometrystructs.hpp"
@@ -20,19 +21,22 @@
 using std::string;
 using std::vector;
 
+#define Picture vector <vector<Color> >
 #define MAX_COLOR 255
 #define YDIM 2000
 #define XDIM 1500
 
 class SceneProcessor {
 private:
+    std::map <string,int> texturesId;
+    vector <Picture> textures;
     bool initCameraData;
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
     vector <std::shared_ptr<Figure> > figures;
     std::shared_ptr<Kdtree> kdtree;
-    vector <vector<Color> > picture;
+    Picture picture;
     vector <LightSource> lights;
     ld backgroundIntensity;
     
@@ -47,6 +51,8 @@ private:
     void calcObserverPoint();
     void initKDtree();
 public:
+    SceneProcessor& loadTextureFromPPMWithKey(string name, string key);
+    SceneProcessor& addTextureMap(string map);
     SceneProcessor& scanLightData(string lights);
     SceneProcessor& scanCameraData(string camera);
     SceneProcessor& scanDataFromMy(string input);

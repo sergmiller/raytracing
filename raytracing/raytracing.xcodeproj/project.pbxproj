@@ -29,6 +29,7 @@
 /* Begin PBXFileReference section */
 		B91FA0561CC3F28100C36FB5 /* sceneprocessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sceneprocessor.cpp; sourceTree = "<group>"; };
 		B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sceneprocessor.hpp; sourceTree = "<group>"; };
+		B940CC831CF7676D00ECDDDF /* texturemap.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = texturemap.txt; sourceTree = "<group>"; };
 		B94E60B81CD94C1A00CC2A37 /* kdtree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kdtree.cpp; sourceTree = "<group>"; };
 		B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kdtree.hpp; sourceTree = "<group>"; };
 		B94E60BC1CDA8B4C00CC2A37 /* time.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = time.txt; sourceTree = "<group>"; };
@@ -87,6 +88,7 @@
 				B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */,
 				B94E60BC1CDA8B4C00CC2A37 /* time.txt */,
 				B9632A871CE4C19B00B915CB /* camera.txt */,
+				B940CC831CF7676D00ECDDDF /* texturemap.txt */,
 				B977D1481CF721FE0066A25F /* light.txt */,
 			);
 			path = raytracing;

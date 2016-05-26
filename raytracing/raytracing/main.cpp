@@ -20,6 +20,9 @@
 #define CAMERA "camera.txt"
 #define OUTPUT "output.ppm"
 #define CUSTOM "chri.stl"
+#define TEXTURE_MAP "texturemap.txt"
+
+//"brick","brown_wood","sand","grey_wood","chess_field"
 
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
@@ -27,12 +30,19 @@ int main(int argc, const char * argv[]) {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor
-//                    .scanDataFromMy(INPUT)
-                    .scanDataFromASCISTL(CUSTOM)
-                    .scanLightData(LIGHT)
-//                    .scanCameraData(CAMERA)
-                    .run()
-                    .printDataWithFormatPPM(OUTPUT);
+                .scanDataFromMy(INPUT)
+                .loadTextureFromPPMWithKey("images-2.txt", "brick")
+                .loadTextureFromPPMWithKey("images-3.txt", "brown_wood")
+                .loadTextureFromPPMWithKey("images-4.txt", "sand")
+                .loadTextureFromPPMWithKey("images-5.txt", "grey_wood")
+                .loadTextureFromPPMWithKey("images-6.txt", "chess_field")
+                .addTextureMap(TEXTURE_MAP)
+//                .scanDataFromASCISTL(CUSTOM)
+                .scanLightData(LIGHT)
+                .scanCameraData(CAMERA)
+                .run()
+                .printDataWithFormatPPM(OUTPUT)
+    ;
     
     end = std::chrono::system_clock::now();
     int64_t elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();

@@ -54,6 +54,11 @@ SceneProcessor& SceneProcessor::scanDataFromMy(string input) {
             color[i]  = std::min(255,std::max(1,color[i]));
         }
         cin >> refl;
+        
+        if(refl > 100 || refl < 0) {
+            refl = 0;
+        }
+        
         if(!type) {
             Point v[3];
             for(int i = 0;i < 3;++i) {
@@ -211,4 +216,49 @@ void SceneProcessor::autoCameraPosition() {
     
     initCameraData = true;
 }
+
+SceneProcessor& SceneProcessor::loadTextureFromPPMWithKey(string name, string key) {
+    FILE* in = freopen(name.data(), "r", stdin);
+    string s;
+    cin >> s;
+    if(s != "P6") {
+        throw new std::bad_function_call;
+    }
+    int len, high;
+    cin >> len >> high;
+    cout << len <<" " <<  high << endl;
+    int maxcolor;
+    cin >> maxcolor;
+    textures.push_back(Picture(high,vector <Color>(len)));
+    Picture& currentTexture = textures[textures.size() - 1];
+    for(int i = 0; i < high; ++i) {
+        for(int j = 0; j < len;++j) {
+            currentTexture[i][j].R = (int)getchar();
+            currentTexture[i][j].G = (int)getchar();
+            currentTexture[i][j].B = (int)getchar();
+        }
+    }
+    
+    fclose(in);
+    
+    texturesId[key] = (int)textures.size();
+    return *this;
+}
+
+SceneProcessor& SceneProcessor::addTextureMap(string map) {
+    int k, numb, alpha;
+    string textureName;
+    cin >> k;
+    for(int i = 0;i < k;++i) {
+        cin >> numb >> textureName >> alpha;
+        --numb;
+        if(alpha > 0 && alpha <= 100 && numb >= 0 && numb < figures.size()) {
+            figures[numb]->setTexture(texturesId[textureName],alpha);
+        }
+    }
+    
+    return *this;
+}
+
+
 

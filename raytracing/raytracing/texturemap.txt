@@ -1,0 +1,7 @@
+5
+1 chess_field 100
+2 brick 100
+3 brown_wood 50
+4 sand 100
+5 grey_wood 100
+
