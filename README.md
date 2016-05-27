@@ -26,6 +26,7 @@ Jesus(30К polygons, time ~ 35s):
 Weight(160К polygons, time ~ 60s):
 
 ![alt tag](http://savepic.ru/9885312.png)
+![alt tag](http://savepic.ru/9879118.png)
 
 Woman(200K polygons, time ~ 70s(with multithreading), ~90s(one thread)):
 
