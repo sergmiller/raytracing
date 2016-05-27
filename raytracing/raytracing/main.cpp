@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
                 .addTextureMap(TEXTURE_MAP)
 //                .scanDataFromASCISTL(CUSTOM)
                 .scanLightData(LIGHT)
-                .scanCameraData(CAMERA)
+//                .scanCameraData(CAMERA)
                 .run()
                 .printDataWithFormatPPM(OUTPUT)
     ;

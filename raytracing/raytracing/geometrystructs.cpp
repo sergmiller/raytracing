@@ -160,6 +160,34 @@ Color Triangle::calcTextureColor(Point intersection, Picture& texture) {
     return texture[coord1][coord2];
 }
 
+Color Sphere::calcTextureColor(Point intersection, Picture& texture) {
+    Color textureColor;
+    Point offset = intersection - centr;
+    Point start = centr - Point(radius, 0, 0);
+    uint64_t xmax = texture.size();
+    uint64_t ymax = texture[0].size();
+    Point proj = offset;
+    proj.z = 0;
+    ld cosfi = scal(proj, start)/(sqrtl(proj.dist2() * start.dist2()));
+    ld fi = 0;
+    Point prv = vect(start,proj);
+    fi = acos(cosfi);
+    if(offset.z < 0) {
+        fi = 2*PI - fi;
+    }
+    
+    uint64_t coord1 = (uint64_t)(fi/(2*PI)*xmax);
+    fi = acos(sqrtl(proj.dist2()/offset.dist2()));
+    if(offset.z < 0) {
+        fi *= (-1);
+    }
+    
+    fi += PI;
+    uint64_t coord2 = (uint64_t)(fi/(PI)*ymax);
+    
+    return texture[coord1][coord2];
+}
+
 std::tuple<ld,ld,ld> solveMatrix(ld m[3][3], ld v[3]) {
     ld d = det(m[0], m[1], m[2]);
     ld d0 = det(v, m[1], m[2]);

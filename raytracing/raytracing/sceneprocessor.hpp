@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 
-#define BACKGROUND_INTENSITY 0.2
+#define BACKGROUND_INTENSITY 0.5
 #define DEFALT_THREAD_NUMB 4
 #define MAX_COLOR 255
 #define YDIM 2000

@@ -24,6 +24,7 @@ using std::cout;
 using std::endl;
 using std::make_pair;
 
+#define PI (ld)acos(-1)
 #define EPS (ld)1e-9
 #define Picture std::vector <std::vector<Color> >
 
@@ -157,7 +158,7 @@ public:
     Sphere(Color color,Point _centr, ld _radius, int _reflectRatio = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
-    Color calcTextureColor(Point intersection, Picture& texture) { return Color(0,0,0);}
+    Color calcTextureColor(Point intersection, Picture& texture);
 private:
     Point centr;
     ld radius;
