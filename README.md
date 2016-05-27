@@ -38,5 +38,5 @@ reflection:
 
 textures:
 
-![alt tag](http://savepic.ru/9883337.png)
+![alt tag](http://savepic.ru/9851608.png)
 
