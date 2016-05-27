@@ -15,6 +15,10 @@ SceneProcessor::SceneProcessor(ld intensity, int threadNumb):backgroundIntensity
     usingMultithreading = (threadNumb > 1);
 }
 
+SceneProcessor::~SceneProcessor() {
+    pool.shutdown();
+}
+
 SceneProcessor& SceneProcessor::scanDataFromASCISTL(string input) {
     FILE* in = freopen(input.data(), "r", stdin);
     string s;
@@ -189,6 +193,8 @@ SceneProcessor& SceneProcessor::run() {
     cout << "pixelsize: " << pixelSize.first << " " << pixelSize.second << endl;
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
+    cout << figures[3]->getTextureId() << endl;
+    
     if(usingMultithreading) {
         for(int i = 0;i < pixelSize.first;++i) {
             for(int j = 0;j < pixelSize.second;++j) {
@@ -202,7 +208,6 @@ SceneProcessor& SceneProcessor::run() {
             }
         }
     }
-    pool.shutdown();
     
     return *this;
 }
@@ -218,7 +223,7 @@ void SceneProcessor::autoCameraPosition() {
     maxdev *= 15;
     cout << maxdev << endl;
     
-    Point normalToScreen = Point(maxdev,-maxdev*2,maxdev/5);
+    Point normalToScreen = Point(-maxdev,maxdev*2,maxdev/5);
     
     Point centrScreen = centr + normalToScreen;
     
@@ -260,11 +265,12 @@ SceneProcessor& SceneProcessor::loadTextureFromPPMWithKey(string name, string ke
     texturesId[key] = (int)textures.size();
     textures.push_back(Picture(high,vector <Color>(len)));
     Picture& currentTexture = textures[textures.size() - 1];
+    getchar();
     for(int i = 0; i < high; ++i) {
         for(int j = 0; j < len;++j) {
-            currentTexture[i][j].R = (int)getchar();
-            currentTexture[i][j].G = (int)getchar();
-            currentTexture[i][j].B = (int)getchar();
+            currentTexture[i][j].R = getchar();
+            currentTexture[i][j].G = getchar();
+            currentTexture[i][j].B = getchar();
         }
     }
     
@@ -281,7 +287,7 @@ SceneProcessor& SceneProcessor::addTextureMap(string texturemap) {
     for(int i = 0;i < k;++i) {
         cin >> numb >> textureName >> alpha;
         --numb;
-        if(alpha > 0 && alpha <= 100 && numb >= 0 && numb < figures.size() && texturesId[textureName] > 0) {
+        if(alpha > 0 && alpha <= 100 && numb >= 0 && numb < figures.size() && texturesId[textureName] >= 0) {
             figures[numb]->setTexture(texturesId[textureName],alpha);
         }
     }

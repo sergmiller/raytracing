@@ -67,7 +67,7 @@ public:
     SceneProcessor& run();
     
     SceneProcessor(ld intensity = 0, int threadNumb = DEFALT_THREAD_NUMB);
-    void calculatePicture();
+    ~SceneProcessor();
 };
 
 #endif /* sceneprocessor_hpp */
