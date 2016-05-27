@@ -27,6 +27,10 @@ Weight(160К polygons, time ~ 60s):
 
 ![alt tag](http://savepic.ru/9885312.png)
 
+Woman(200K polygons, time ~ 70s(with multithreading), ~90s(one thread)):
+
+![alt][tag](http://savepic.ru/9835206.png)
+
 reflection:
 
 ![alt tag](http://savepic.ru/9836460.png)
@@ -35,3 +39,4 @@ reflection:
 textures:
 
 ![alt tag](http://savepic.ru/9883337.png)
+
