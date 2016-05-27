@@ -7,6 +7,5 @@
 6 brown_wood 75
 
 
-
 //"brick","brown_wood","sand","grey_wood","chess_field"
 

@@ -220,7 +220,8 @@ void SceneProcessor::autoCameraPosition() {
     left.printPoint();
     ld maxdev = fmax(right.x, fmax(right.y, right.z));
     maxdev =  fmax(fmax(maxdev,-left.x), fmax(-left.y, -left.z));
-    maxdev *= 15;
+    maxdev *= 20;
+    maxdev *= SCALE;
     cout << maxdev << endl;
     
     Point normalToScreen = Point(-maxdev,maxdev*2,maxdev/5);

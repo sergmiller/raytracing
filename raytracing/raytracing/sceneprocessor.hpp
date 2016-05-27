@@ -22,6 +22,7 @@
 using std::string;
 using std::vector;
 
+#define SCALE 0.5
 #define BACKGROUND_INTENSITY 0.5
 #define DEFALT_THREAD_NUMB 4
 #define MAX_COLOR 255
