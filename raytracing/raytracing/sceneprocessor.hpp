@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 
-#define SCALE 0.5
+#define SCALE 0.0005
 #define BACKGROUND_INTENSITY 0.5
 #define DEFALT_THREAD_NUMB 4
 #define MAX_COLOR 255
@@ -68,7 +68,6 @@ public:
     SceneProcessor& run();
     
     SceneProcessor(ld intensity = 0, int threadNumb = DEFALT_THREAD_NUMB);
-    ~SceneProcessor();
 };
 
 #endif /* sceneprocessor_hpp */

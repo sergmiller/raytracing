@@ -15,9 +15,6 @@ SceneProcessor::SceneProcessor(ld intensity, int threadNumb):backgroundIntensity
     usingMultithreading = (threadNumb > 1);
 }
 
-SceneProcessor::~SceneProcessor() {
-    pool.shutdown();
-}
 
 SceneProcessor& SceneProcessor::scanDataFromASCISTL(string input) {
     FILE* in = freopen(input.data(), "r", stdin);
@@ -208,6 +205,8 @@ SceneProcessor& SceneProcessor::run() {
             }
         }
     }
+    
+    pool.shutdown();
     
     return *this;
 }

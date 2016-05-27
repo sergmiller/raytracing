@@ -25,7 +25,7 @@
 
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
-    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 1);
+    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 4);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor
