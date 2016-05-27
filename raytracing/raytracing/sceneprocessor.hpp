@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 
-#define SCALE 0.0005
+#define SCALE 0.5
 #define BACKGROUND_INTENSITY 0.5
 #define DEFALT_THREAD_NUMB 4
 #define MAX_COLOR 255
@@ -71,4 +71,3 @@ public:
 };
 
 #endif /* sceneprocessor_hpp */
-//-400 400 200 2e5

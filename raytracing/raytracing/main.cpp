@@ -25,7 +25,7 @@
 
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
-    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 4);
+    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 1);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
                 .loadTextureFromPPMWithKey("images-3.txt", "brown_wood")
                 .loadTextureFromPPMWithKey("images-4.txt", "sand")
                 .loadTextureFromPPMWithKey("images-5.txt", "grey_wood")
-                .loadTextureFromPPMWithKey("images-6.txt", "chess_field")
+                .loadTextureFromPPMWithKey("masha.ppm", "face")
                 .addTextureMap(TEXTURE_MAP)
 //                .scanDataFromASCISTL(CUSTOM)
                 .scanLightData(LIGHT)

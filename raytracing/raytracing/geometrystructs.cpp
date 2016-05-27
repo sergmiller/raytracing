@@ -154,10 +154,10 @@ Color Triangle::calcTextureColor(Point intersection, Picture& texture) {
     Point dir = intersection - v[0];
     uint64_t xmax = texture.size();
     uint64_t ymax = texture[0].size();
-    uint64_t coord2 = (uint64_t)(scal(dir, v01)/sqrtl(v01.dist2())) % xmax;
+    uint64_t coord1 = (uint64_t)(scal(dir, v01)/sqrtl(v01.dist2())) % ymax;
     Point normalv02 = v02 - v01 * (scal(v01,v02)/v01.dist2());
-    uint64_t coord1 = (uint64_t)(scal(dir, normalv02)/sqrtl(normalv02.dist2())) % ymax;
-    return texture[coord1][coord2];
+    uint64_t coord2 = (uint64_t)(xmax - (scal(dir, normalv02)/sqrtl(normalv02.dist2()))) % xmax;
+    return texture[coord2][coord1];
 }
 
 Color Sphere::calcTextureColor(Point intersection, Picture& texture) {
@@ -179,7 +179,7 @@ Color Sphere::calcTextureColor(Point intersection, Picture& texture) {
     uint64_t coord2 = (uint64_t)(fi/(2*PI)*ymax);
     fi = asinl(offset.z/radius);
     fi += PI/2;
-    uint64_t coord1 = (uint64_t)(fi/(PI)*xmax);
+    uint64_t coord1 = (uint64_t)((PI-fi)/(PI)*xmax);
     
     return texture[coord1][coord2];
 }

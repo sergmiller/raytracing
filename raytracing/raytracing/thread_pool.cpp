@@ -45,7 +45,6 @@ ThreadPool::ThreadPool (const size_t num_workers): num_workers(num_workers), is_
         } ));
 }
 
-
 void ThreadPool::submit (function<void()> func) {
     if (is_shutdown.load())
         throw exception();
