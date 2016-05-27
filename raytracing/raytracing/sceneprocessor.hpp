@@ -15,12 +15,15 @@
 #include <cassert>
 #include <string>
 #include "geometrystructs.hpp"
+#include "thread_pool.hpp"
 #include "lighting.hpp"
 #include "kdtree.hpp"
 
 using std::string;
 using std::vector;
 
+#define BACKGROUND_INTENSITY 0.2
+#define DEFALT_THREAD_NUMB 4
 #define MAX_COLOR 255
 #define YDIM 2000
 #define XDIM 1500
@@ -30,6 +33,7 @@ private:
     std::map <string,int> texturesId;
     vector <Picture> textures;
     bool initCameraData;
+    bool usingMultithreading;
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
@@ -43,7 +47,10 @@ private:
     Point rightBoundScene;
     
     Color calcColorInPoint(Point ray, Point start, int contribution, int depth);
-    Color calcPixel(int _x, int _y);
+    void calcPixel(int _x, int _y);
+    static void __calcPixel(int _x, int _y, SceneProcessor* proc);
+    ThreadPool pool;
+
     
     void getKeyPoints();
     void autoCameraPosition();
@@ -59,7 +66,7 @@ public:
     SceneProcessor& printDataWithFormatPPM(string output);
     SceneProcessor& run();
     
-    SceneProcessor(ld intensity = 0);
+    SceneProcessor(ld intensity = 0, int threadNumb = DEFALT_THREAD_NUMB);
     void calculatePicture();
 };
 

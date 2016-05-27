@@ -12,6 +12,7 @@
 		B95D242E1CBAE7D000BA20FE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B95D242D1CBAE7D000BA20FE /* main.cpp */; };
 		B95D24361CBAEC4400BA20FE /* geometrystructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */; };
 		B9B5DDB81CC0DF9900CBE82B /* lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */; };
+		B9FA22AD1CF7BDB6009875B5 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9FA22AC1CF7BDB6009875B5 /* thread_pool.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +44,8 @@
 		B9A9A55F1CC006C3001E1EB8 /* output.ppm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.ppm; sourceTree = "<group>"; };
 		B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lighting.cpp; sourceTree = "<group>"; };
 		B9B5DDB71CC0DF9900CBE82B /* lighting.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lighting.hpp; sourceTree = "<group>"; };
+		B9F224D61CF7A27700A48073 /* thread_pool.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thread_pool.hpp; sourceTree = "<group>"; };
+		B9FA22AC1CF7BDB6009875B5 /* thread_pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread_pool.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +78,8 @@
 		B95D242C1CBAE7D000BA20FE /* raytracing */ = {
 			isa = PBXGroup;
 			children = (
+				B9F224D61CF7A27700A48073 /* thread_pool.hpp */,
+				B9FA22AC1CF7BDB6009875B5 /* thread_pool.cpp */,
 				B9A9A55F1CC006C3001E1EB8 /* output.ppm */,
 				B95D242D1CBAE7D000BA20FE /* main.cpp */,
 				B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */,
@@ -155,6 +160,7 @@
 				B94E60BA1CD94C1A00CC2A37 /* kdtree.cpp in Sources */,
 				B95D242E1CBAE7D000BA20FE /* main.cpp in Sources */,
 				B9B5DDB81CC0DF9900CBE82B /* lighting.cpp in Sources */,
+				B9FA22AD1CF7BDB6009875B5 /* thread_pool.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,10 @@
 
 using std::fmax;
 
-SceneProcessor::SceneProcessor(ld intensity):backgroundIntensity(intensity), initCameraData(false), leftBoundScene(Point(INFINITY,INFINITY,INFINITY)), rightBoundScene(Point(-INFINITY,-INFINITY,-INFINITY)) {};
+SceneProcessor::SceneProcessor(ld intensity, int threadNumb):backgroundIntensity(intensity), initCameraData(false), leftBoundScene(Point(INFINITY,INFINITY,INFINITY)), rightBoundScene(Point(-INFINITY,-INFINITY,-INFINITY)), pool(threadNumb)
+{
+    usingMultithreading = (threadNumb > 1);
+}
 
 SceneProcessor& SceneProcessor::scanDataFromASCISTL(string input) {
     FILE* in = freopen(input.data(), "r", stdin);
@@ -127,13 +130,18 @@ Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution,
     return color;
 }
 
-Color SceneProcessor::calcPixel(int _x, int _y) {
-    Color color;
-    Point pixel = controlPoint + ((dim.first * (ld)_x) + (dim.second * (ld)_y));
-    Point ray = pixel - observerPoint;
-    
-    return calcColorInPoint(ray, pixel, 100, 1);
+void SceneProcessor::calcPixel(int _x, int _y) {
+        pool.submit(bind(__calcPixel, _x, _y, this));
 }
+
+void SceneProcessor::__calcPixel(int _x, int _y, SceneProcessor* proc) {
+    Color color;
+    Point pixel = proc->controlPoint + ((proc->dim.first * (ld)_x) + (proc->dim.second * (ld)_y));
+    Point ray = pixel - proc->observerPoint;
+    
+    proc->picture[_x][_y] = proc->calcColorInPoint(ray, pixel, 100, 1);
+}
+
 
 SceneProcessor& SceneProcessor::scanLightData(string light) {
     FILE* in = freopen(light.data(), "r", stdin);
@@ -181,11 +189,20 @@ SceneProcessor& SceneProcessor::run() {
     cout << "pixelsize: " << pixelSize.first << " " << pixelSize.second << endl;
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
-    for(int i = 0;i < pixelSize.first;++i) {
-        for(int j = 0;j < pixelSize.second;++j) {
-            picture[i][j] = calcPixel(i,j);
+    if(usingMultithreading) {
+        for(int i = 0;i < pixelSize.first;++i) {
+            for(int j = 0;j < pixelSize.second;++j) {
+                 calcPixel(i,j);
+            }
+        }
+    } else {
+        for(int i = 0;i < pixelSize.first;++i) {
+            for(int j = 0;j < pixelSize.second;++j) {
+                __calcPixel(i,j,this);
+            }
         }
     }
+    pool.shutdown();
     
     return *this;
 }
@@ -198,10 +215,10 @@ void SceneProcessor::autoCameraPosition() {
     left.printPoint();
     ld maxdev = fmax(right.x, fmax(right.y, right.z));
     maxdev =  fmax(fmax(maxdev,-left.x), fmax(-left.y, -left.z));
-    maxdev *= 20;
+    maxdev *= 15;
     cout << maxdev << endl;
     
-    Point normalToScreen = Point(-maxdev,maxdev*2,maxdev/5);
+    Point normalToScreen = Point(maxdev,-maxdev*2,maxdev/5);
     
     Point centrScreen = centr + normalToScreen;
     

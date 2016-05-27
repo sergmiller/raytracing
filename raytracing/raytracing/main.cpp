@@ -13,33 +13,32 @@
 
 #include "sceneprocessor.hpp"
 
-#define BACKGROUND_INTENSITY 0.2
 #define INPUT "input.txt"
 #define GNOME "gnomeASCI.stl"
 #define LIGHT "light.txt"
 #define CAMERA "camera.txt"
 #define OUTPUT "output.ppm"
-#define CUSTOM "chri.stl"
+#define CUSTOM "nudegirl4.stl"
 #define TEXTURE_MAP "texturemap.txt"
 
 //"brick","brown_wood","sand","grey_wood","chess_field"
 
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
-    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY);
+    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 4);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor
-                .scanDataFromMy(INPUT)
-                .loadTextureFromPPMWithKey("images-2.txt", "brick")
-                .loadTextureFromPPMWithKey("images-3.txt", "brown_wood")
-                .loadTextureFromPPMWithKey("images-4.txt", "sand")
-                .loadTextureFromPPMWithKey("images-5.txt", "grey_wood")
-                .loadTextureFromPPMWithKey("images-6.txt", "chess_field")
-                .addTextureMap(TEXTURE_MAP)
-//                .scanDataFromASCISTL(CUSTOM)
+//                .scanDataFromMy(INPUT)
+//                .loadTextureFromPPMWithKey("images-2.txt", "brick")
+//                .loadTextureFromPPMWithKey("images-3.txt", "brown_wood")
+//                .loadTextureFromPPMWithKey("images-4.txt", "sand")
+//                .loadTextureFromPPMWithKey("images-5.txt", "grey_wood")
+//                .loadTextureFromPPMWithKey("alena.ppm", "face")
+//                .addTextureMap(TEXTURE_MAP)
+                .scanDataFromASCISTL(CUSTOM)
                 .scanLightData(LIGHT)
-                .scanCameraData(CAMERA)
+//                .scanCameraData(CAMERA)
                 .run()
                 .printDataWithFormatPPM(OUTPUT)
     ;

@@ -1,1 +1,1 @@
-elapsed seconds: 24
+elapsed seconds: 70
