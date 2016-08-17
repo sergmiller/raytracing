@@ -13,28 +13,29 @@
 
 #include "sceneprocessor.hpp"
 
-#define INPUT "input.txt"
+#define INPUT "input_data.txt"
 #define GNOME "gnomeASCI.stl"
 #define LIGHT "light.txt"
 #define CAMERA "camera.txt"
 #define OUTPUT "output.ppm"
-#define CUSTOM "nudegirl4.stl"
+#define CUSTOM "nudegirl.stl"
 #define TEXTURE_MAP "texturemap.txt"
 
 //"brick","brown_wood","sand","grey_wood","chess_field"
 
 int main(int argc, const char * argv[]) {
     std::ios_base::sync_with_stdio(false);
-    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 1);
+    std::cin.tie(0);
+    SceneProcessor sceneProcessor(BACKGROUND_INTENSITY, 4);
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     sceneProcessor
                 .scanDataFromMy(INPUT)
-                .loadTextureFromPPMWithKey("images-2.txt", "brick")
-                .loadTextureFromPPMWithKey("images-3.txt", "brown_wood")
-                .loadTextureFromPPMWithKey("images-4.txt", "sand")
-                .loadTextureFromPPMWithKey("images-5.txt", "grey_wood")
-                .loadTextureFromPPMWithKey("masha.ppm", "face")
+                .loadTextureFromPPMWithKey("brick.ppm", "brick")
+                .loadTextureFromPPMWithKey("brown_wood.ppm", "brown_wood")
+                .loadTextureFromPPMWithKey("sand.ppm", "sand")
+                .loadTextureFromPPMWithKey("grey_wood.ppm", "grey_wood")
+                .loadTextureFromPPMWithKey("chess_field.ppm", "chess_field")
                 .addTextureMap(TEXTURE_MAP)
 //                .scanDataFromASCISTL(CUSTOM)
                 .scanLightData(LIGHT)
@@ -45,8 +46,10 @@ int main(int argc, const char * argv[]) {
     
     end = std::chrono::system_clock::now();
     int64_t elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-    FILE* outtime = freopen("time.txt", "w", stdout);
     cout << "elapsed seconds: " << elapsed_milliseconds/1000 << endl;
-    fclose(outtime);
+//    FILE* outtime = freopen("time.txt", "w", stdout);
+//    cout << "elapsed seconds1: " << elapsed_milliseconds/1000 << endl;
+//    fclose(stdout);
+//    cout << "elapsed seconds2: " << elapsed_milliseconds/1000 << endl;
     return 0;
 }

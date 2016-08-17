@@ -33,12 +33,11 @@
 		B940CC831CF7676D00ECDDDF /* texturemap.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = texturemap.txt; sourceTree = "<group>"; };
 		B94E60B81CD94C1A00CC2A37 /* kdtree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kdtree.cpp; sourceTree = "<group>"; };
 		B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kdtree.hpp; sourceTree = "<group>"; };
-		B94E60BC1CDA8B4C00CC2A37 /* time.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = time.txt; sourceTree = "<group>"; };
 		B95D242A1CBAE7D000BA20FE /* raytracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = raytracing; sourceTree = BUILT_PRODUCTS_DIR; };
 		B95D242D1CBAE7D000BA20FE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometrystructs.cpp; sourceTree = "<group>"; };
 		B95D24351CBAEC4400BA20FE /* geometrystructs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = geometrystructs.hpp; sourceTree = "<group>"; };
-		B95D24371CBAF7F900BA20FE /* input.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = input.txt; sourceTree = "<group>"; };
+		B95D24371CBAF7F900BA20FE /* input_data.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = input_data.txt; sourceTree = "<group>"; };
 		B9632A871CE4C19B00B915CB /* camera.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = camera.txt; sourceTree = "<group>"; };
 		B977D1481CF721FE0066A25F /* light.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = light.txt; sourceTree = "<group>"; };
 		B9A9A55F1CC006C3001E1EB8 /* output.ppm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.ppm; sourceTree = "<group>"; };
@@ -80,21 +79,20 @@
 			children = (
 				B9F224D61CF7A27700A48073 /* thread_pool.hpp */,
 				B9FA22AC1CF7BDB6009875B5 /* thread_pool.cpp */,
-				B9A9A55F1CC006C3001E1EB8 /* output.ppm */,
 				B95D242D1CBAE7D000BA20FE /* main.cpp */,
 				B95D24341CBAEC4400BA20FE /* geometrystructs.cpp */,
 				B95D24351CBAEC4400BA20FE /* geometrystructs.hpp */,
-				B95D24371CBAF7F900BA20FE /* input.txt */,
 				B9B5DDB61CC0DF9900CBE82B /* lighting.cpp */,
 				B9B5DDB71CC0DF9900CBE82B /* lighting.hpp */,
 				B91FA0561CC3F28100C36FB5 /* sceneprocessor.cpp */,
 				B91FA0571CC3F28100C36FB5 /* sceneprocessor.hpp */,
 				B94E60B81CD94C1A00CC2A37 /* kdtree.cpp */,
 				B94E60B91CD94C1A00CC2A37 /* kdtree.hpp */,
-				B94E60BC1CDA8B4C00CC2A37 /* time.txt */,
-				B9632A871CE4C19B00B915CB /* camera.txt */,
-				B940CC831CF7676D00ECDDDF /* texturemap.txt */,
 				B977D1481CF721FE0066A25F /* light.txt */,
+				B9632A871CE4C19B00B915CB /* camera.txt */,
+				B95D24371CBAF7F900BA20FE /* input_data.txt */,
+				B940CC831CF7676D00ECDDDF /* texturemap.txt */,
+				B9A9A55F1CC006C3001E1EB8 /* output.ppm */,
 			);
 			path = raytracing;
 			sourceTree = "<group>";

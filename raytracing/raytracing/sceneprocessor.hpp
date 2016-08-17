@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <fstream>
 #include <map>
 #include <cassert>
 #include <string>
@@ -35,6 +36,7 @@ private:
     vector <Picture> textures;
     bool initCameraData;
     bool usingMultithreading;
+    bool isWorked;
     Point observerPoint, controlPoint;
     pair <Point,Point> dim;
     pair <size_t,size_t> pixelSize;
@@ -57,6 +59,7 @@ private:
     void autoCameraPosition();
     void calcObserverPoint();
     void initKDtree();
+    
 public:
     SceneProcessor& loadTextureFromPPMWithKey(string name, string key);
     SceneProcessor& addTextureMap(string map);
@@ -68,6 +71,7 @@ public:
     SceneProcessor& run();
     
     SceneProcessor(ld intensity = 0, int threadNumb = DEFALT_THREAD_NUMB);
+    ~SceneProcessor() { if(!isWorked)pool.shutdown();};
 };
 
 #endif /* sceneprocessor_hpp */

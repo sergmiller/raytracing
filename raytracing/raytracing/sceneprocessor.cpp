@@ -9,8 +9,10 @@
 #include "sceneprocessor.hpp"
 
 using std::fmax;
+using std::ifstream;
+using std::ofstream;
 
-SceneProcessor::SceneProcessor(ld intensity, int threadNumb):backgroundIntensity(intensity), initCameraData(false), leftBoundScene(Point(INFINITY,INFINITY,INFINITY)), rightBoundScene(Point(-INFINITY,-INFINITY,-INFINITY)), pool(threadNumb)
+SceneProcessor::SceneProcessor(ld intensity, int threadNumb):backgroundIntensity(intensity), initCameraData(false), isWorked(false), leftBoundScene(Point(INFINITY,INFINITY,INFINITY)), rightBoundScene(Point(-INFINITY,-INFINITY,-INFINITY)), pool(threadNumb)
 {
     usingMultithreading = (threadNumb > 1);
 }
@@ -51,7 +53,7 @@ SceneProcessor& SceneProcessor::scanDataFromMy(string input) {
     for (int i = 0;i < n;++i) {
         int type;
         int color[3];
-        int refl;
+        int refl, transp;
         cin >> type;
         for(int i = 0;i < 3;++i) {
             cin >> color[i];
@@ -63,17 +65,23 @@ SceneProcessor& SceneProcessor::scanDataFromMy(string input) {
             refl = 0;
         }
         
+        cin >> transp;
+        
+        if(transp > 100 || transp < 0) {
+            transp = 0;
+        }
+        
         if(!type) {
             Point v[3];
             for(int i = 0;i < 3;++i) {
                 cin >> v[i].x >> v[i].y >> v[i].z;
             }
-            figures.push_back(std::shared_ptr<Figure>(new Triangle(Color(color),v,Point(0,0,0),refl)));
+            figures.push_back(std::shared_ptr<Figure>(new Triangle(Color(color),v,Point(0,0,0),refl,transp)));
         } else {
             Point c;
             ld r;
             cin >> c.x >> c.y >> c.z >> r;
-            figures.push_back(std::shared_ptr<Figure>(new Sphere(Color(color),c,r,refl)));
+            figures.push_back(std::shared_ptr<Figure>(new Sphere(Color(color),c,r,refl,transp)));
         }
     }
     
@@ -82,7 +90,9 @@ SceneProcessor& SceneProcessor::scanDataFromMy(string input) {
 }
 
 SceneProcessor& SceneProcessor::printDataWithFormatPPM(string output) {
-    FILE* out = freopen(output.data(), "w", stdout);
+//    FILE* out = freopen(output.data(), "w", stdout);
+    ofstream cout;
+    cout.open(output.data());
     cout << "P3\n";
     cout << pixelSize.second << " " <<  pixelSize.first << "\n";
     cout << MAX_COLOR << "\n";
@@ -92,7 +102,7 @@ SceneProcessor& SceneProcessor::printDataWithFormatPPM(string output) {
             cout << "\n";
         }
     }
-    fclose(out);
+    cout.close();
     return *this;
 }
 
@@ -107,25 +117,29 @@ Color SceneProcessor::calcColorInPoint(Point ray, Point start, int contribution,
     ld brightness = 0;
     
     if(status(intersectionData) != NOT_INTERSECT) {
-        ld textureAlpha = figure(intersectionData)->getTextureAlpha();
+        ld textureAlpha = (ld)figure(intersectionData)->getTextureAlpha()/100;
         
         Color textureColor;
         
         int textureId = figure(intersectionData)->getTextureId();
         
         if(textureId != -1) {
-            textureColor =  figure(intersectionData)->calcTextureColor(point(intersectionData), textures[textureId]);
+            textureColor = figure(intersectionData)->calcTextureColor(point(intersectionData), textures[textureId]);
         }
         
-        color = figure(intersectionData)->getColor() * (1 - (textureAlpha/100)) + textureColor * (textureAlpha/100);
+        color = figure(intersectionData)->getColor() * (1 - textureAlpha) + textureColor * textureAlpha;
         for(int i = 0;i < lights.size(); ++i) {
             brightness += lights[i].findLitPoint(intersectionData, kdtree);
         }
-        ld reflectAlpha = (ld)figure(intersectionData)->getReflectAlpha();
+        ld reflectAlpha = (ld)figure(intersectionData)->getReflectAlpha()/100;
+        ld transparentAlpha = (ld)figure(intersectionData)->getTransparentAlpha()/100;
         Point reflectedRay = getReflectionRay(ray, figure(intersectionData)->getFrontSideNormalInPoint(point(intersectionData)));
-        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (reflectAlpha - 1)/100, ++depth);
         
-        color = color * (brightness + backgroundIntensity) * (1 - (reflectAlpha/100)) + reflectColor * (reflectAlpha/100);
+        Color reflectColor = calcColorInPoint(reflectedRay, point(intersectionData) + reflectedRay * (EPS*EPS), contribution * (reflectAlpha - 0.02), depth + 1);
+        
+        Color transparentColor = calcColorInPoint(ray, point(intersectionData) + ray * (EPS*EPS), contribution * (transparentAlpha - 0.02), depth  + 1);
+        
+        color = (color * (1 - transparentAlpha) + transparentColor * transparentAlpha) * (brightness + backgroundIntensity) * (1 - reflectAlpha) + reflectColor * reflectAlpha;
     }
     
     return color;
@@ -182,6 +196,7 @@ void SceneProcessor::initKDtree() {
 }
 
 SceneProcessor& SceneProcessor::run() {
+    isWorked = true;
     initKDtree();
     if(!initCameraData) {
         autoCameraPosition();

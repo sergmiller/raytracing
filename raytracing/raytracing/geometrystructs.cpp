@@ -9,11 +9,11 @@
 #include "geometrystructs.hpp"
 #include <cassert>
 
-
-Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha): normalToFrontSide(normal) {
+Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha, int _transparentAlpha): normalToFrontSide(normal) {
     textureId = -1;
     textureAlpha = 0;
     reflectAlpha = _reflectAlpha;
+    transparentAlpha = _transparentAlpha;
     color = _color;
     
     for(int i = 0;i < 3;++i) {
@@ -38,10 +38,11 @@ Triangle::Triangle(Color _color, Point _v[3], Point normal, int _reflectAlpha): 
     leftBound = Point(minn[0],minn[1],minn[2]);
 }
 
-Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectAlpha): centr(_centr), radius(_radius) {
+Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectAlpha, int _transparentAlpha): centr(_centr), radius(_radius) {
     textureId = -1;
     textureAlpha = 0;
     reflectAlpha = _reflectAlpha;
+    transparentAlpha = _transparentAlpha;
     color = _color;
     
     Point rad(radius,radius,radius);
@@ -49,8 +50,6 @@ Sphere::Sphere(Color _color,Point _centr, ld _radius, int _reflectAlpha): centr(
     rightBound = centr + rad;
     leftBound = centr - rad;
 }
-
-
 
 pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     Point intersect;
@@ -87,7 +86,6 @@ pair <Status,Point> Triangle::checkIntersect(Point ray, Point start) {
     vc[1] = v_0inter.y;
     vc[2] = v_0inter.z;
     
-
     std::tuple <ld,ld,ld> solution = solveMatrix(m, vc);
     pair<ld,ld> coord = make_pair(std::get<0>(solution), std::get<1>(solution));
     

@@ -54,6 +54,8 @@ Kdtree::Kdtree(vector<shared_ptr<Figure> >& _data, Point& _leftBound, Point& _ri
     sort(data.begin(),data.end(),cmp);
    
     
+/*  maybe somewhen SAH heuristic will added for more balanced contol kdtree's depth
+ **/
 //    ld defaultSAH = EMPTY_COST + getSurface(leftBound,rightBound) * size;
 //    
 //    int indexMinSAH = -1;

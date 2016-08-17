@@ -131,11 +131,13 @@ public:
     Point getLeftBound() {return rightBound;}
     int getReflectAlpha() {return reflectAlpha;}
     int getTextureAlpha() {return textureAlpha;}
+    int getTransparentAlpha() {return transparentAlpha;}
     int getTextureId() {return textureId;}
     void setTexture(int _textureId, int _textureAlpha) { textureId = _textureId; textureAlpha = _textureAlpha; }
 protected:
     int textureAlpha;
     int reflectAlpha;
+    int transparentAlpha;
     int textureId;
     Color color;
     Point rightBound;
@@ -144,7 +146,7 @@ protected:
 
 class Triangle: public Figure{
 public:
-    Triangle(Color color, Point _v[3], Point norm = Point(0,0,0), int _reflectRatio = 0);
+    Triangle(Color color, Point _v[3], Point norm = Point(0,0,0), int _reflectAlpha = 0, int _transparentAlpha = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
     Color calcTextureColor(Point intersection, Picture& texture);
@@ -155,7 +157,7 @@ private:
 
 class Sphere: public Figure{
 public:
-    Sphere(Color color,Point _centr, ld _radius, int _reflectRatio = 0);
+    Sphere(Color color,Point _centr, ld _radius, int _reflectAlpha = 0, int _transparentAlpha = 0);
     pair <Status,Point> checkIntersect(Point ray, Point start);
     Point getFrontSideNormalInPoint(Point p);
     Color calcTextureColor(Point intersection, Picture& texture);

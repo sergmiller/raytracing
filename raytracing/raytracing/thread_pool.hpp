@@ -24,7 +24,6 @@ private:
     atomic<bool> is_shutdown;
 public:
     explicit thread_safe_queue() : is_shutdown(false) {}
-    ~thread_safe_queue() {}
     void enqueue(function<void()> item);
     void pop(function<void()>& item);
     void shutdown();
