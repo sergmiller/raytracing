@@ -205,7 +205,7 @@ SceneProcessor& SceneProcessor::run() {
     cout << "pixelsize: " << pixelSize.first << " " << pixelSize.second << endl;
     picture.resize(pixelSize.first, vector <Color> (pixelSize.second));
     
-    cout << figures[3]->getTextureId() << endl;
+//    cout << figures[3]->getTextureId() << endl;
     
     if(usingMultithreading) {
         for(int i = 0;i < pixelSize.first;++i) {
@@ -234,15 +234,14 @@ void SceneProcessor::autoCameraPosition() {
     left.printPoint();
     ld maxdev = fmax(right.x, fmax(right.y, right.z));
     maxdev =  fmax(fmax(maxdev,-left.x), fmax(-left.y, -left.z));
-    maxdev *= 20;
     maxdev *= SCALE;
     cout << maxdev << endl;
     
-    Point normalToScreen = Point(-maxdev,maxdev*2,maxdev/5);
+    Point normalToScreen = Point(-maxdev,maxdev,maxdev/5); // -1,2,0.2
     
     Point centrScreen = centr + normalToScreen;
     
-    ld len = maxdev*sqrtl(2.0)/(4 * YDIM);
+    ld len = maxdev*sqrtl(2.0)/(1000 * YDIM); //4
     
     dim.second = Point(3/sqrtl(10.0), 1/sqrtl(10.0), 0) * len;
     Point vectx = vect(dim.second, normalToScreen);

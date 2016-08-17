@@ -1,9 +1,9 @@
-0
-1 chess_field 50
-2 brick 50
-3 sand 50
-6 brown_wood 50
-4 grey_wood 50
+2
+1 chess_field 100
+3 brown_wood 100
+
+
+4 brown_wood 100
 
 
 //"brick","brown_wood","sand","grey_wood","chess_field"
