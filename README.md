@@ -1,50 +1,50 @@
 # raytracing
 simple ray tracing, c++ project for MIPT programming course semester 4 
+(works on cpus via thread pool)
 
-all 1500x2000
+all pictures 1500x2000
 
 (oktaeder and sphere)
-![alt tag](http://savepic.ru/9384756.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/sample.png)
 
 with shadows:
 (4 light sources)
-![alt tag](http://savepic.ru/9381589.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/shadows.png)
 
 all figures inside big green sphere:
 (5 light sources)
-![alt tag](http://savepic.ru/9391865.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/inside_sphere.png)
 
 gnome(764 polygons, time ~ 20s):
 
-![alt tag](http://savepic.ru/9819413.png)
-![alt tag](http://savepic.ru/9810197.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/gnome_1.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/gnome_2.png)
 
 Jesus(30К polygons, time ~ 35s):
 
-![alt tag](http://savepic.ru/9859713.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/jesus.bmp)
 
 Weight(160К polygons, time ~ 60s):
 
-![alt tag](http://savepic.ru/9885312.png)
-![alt tag](http://savepic.ru/9879118.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/weight_1.bmp)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/weight_2.bmp)
 
 Woman(200K polygons, time ~ 70s(with multithreading), ~90s(one thread)):
 
-![alt tag](http://savepic.ru/9835206.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/woman.bmp)
 
 reflection:
 
-![alt tag](http://savepic.ru/9836460.png)
-![alt tag](http://savepic.ru/9856640.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/reflection_1.bmp))
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/reflection_2.bmp)
 
 textures:
 
-![alt tag](http://savepic.ru/9851608.png)
-![alt tag](http://savepic.ru/9856730.png)
-![alt tag](http://savepic.ru/9863901.png)
-![alt tag](http://savepic.ru/9856761.png)
-![alt tag](http://savepic.ru/10335049.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/textures_1.bmp)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/textures_2.bmp)
+
 
 transparency:
 
-![alt tag](http://savepic.ru/10997806.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/transparency_1.png)
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/transparency_2.png)
