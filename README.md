@@ -35,7 +35,7 @@ Woman(200K polygons, time ~ 70s(with multithreading), ~90s(one thread)):
 
 reflection:
 
-![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/reflection_1.bmp))
+![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/reflection_1.bmp)
 ![alt tag](https://github.com/sergmiller/raytracing/blob/master/images/reflection_2.bmp)
 
 textures:
